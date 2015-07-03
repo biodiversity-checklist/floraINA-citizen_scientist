@@ -1,0 +1,6 @@
+User-Agent: *
+Disallow: /
+
+select * from taxon where id in (select det.taxonID from det inner join indiv on indiv.id = det.indivID where indiv.n_status = 0);
+
+ALTER TABLE `img` CHANGE `plantpart` `plantpart` ENUM('whole twig with leaves (and inflorescence)','whole compound leaf','leaf upper surface','leaf lower surface','lower leafbase','leaf axil (w stipules petiole)','terminal bud','inflorescence','flower/fruit basal view','flower/fruit side view','flower/fruit apical view','flower/fruit longitudinal section','flower/fruit cross section','twig surface','twig cross section','trunk bark') CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;

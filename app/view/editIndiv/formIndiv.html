@@ -1,0 +1,79 @@
+{foreach $indiv as $dataIndiv}
+    <div class="form-group">
+        <label for="plot" class="col-sm-3 control-label">Plot/Set</label>
+        <div class="col-sm-5">
+            <input class="form-control" type="text" id="plot" name="plot" value="{$dataIndiv.plot}"/>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="tag" class="col-sm-3 control-label">Tag/Nomor Seri</label>
+        <div class="col-sm-5">
+            <input class="form-control" type="text" id="tag" name="tag" value="{$dataIndiv.tag}" />
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="locnID" class="col-sm-3 control-label">Lokasi (*)</label>
+        <div class="col-sm-5">
+            <select class="form-control" name="locnID" id="locnID">
+                <option value="">Choose Location</option>
+                {foreach from=$locn item=location}
+                    {if $location.locality}
+                    <option value="{$location.id}">{$location.locality}</option>
+                    {/if}
+                {/foreach}
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <a href="#testOnebyone-modal" class="btn florakb-btn" data-toggle="modal" data-target="#modal-location">Lokasi Baru</a>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label class="col-sm-3 control-label">(*) harus diisi</label>
+    </div>
+    
+    <literal>
+    <script type="text/javascript">
+    
+        $().ready(function() {
+            var localtity= "{$dataIndiv.locnID}";
+            $("select option").each(function(){
+              if ($(this).val() == localtity)
+                $(this).attr("selected","selected");
+            });
+        });
+    
+    </script>
+    </literal>
+    
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-5">
+          <button type="submit" class="btn florakb-btn">Submit</button>
+        </div>
+    </div>
+{/foreach} 
+<script type="text/javascript">
+$().ready(function() {
+    
+    $("#aa").validate({
+        rules: {
+            tag: {
+                number: true
+            },
+            locnID: {
+                required: true
+            }
+		},
+		messages: {
+            tag: {
+                number: " Please enter number"
+            },
+            locnID: {
+                required: " Please choose location"
+            }
+		},
+    });
+});
+</script>

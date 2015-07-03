@@ -1,0 +1,37 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+        <h3>Insert One By One</h3>
+        
+        <!-- STEP WIZARD -->
+        <div class="wizard">
+            <a class="current"><span class="badge">1</span> Masukkan Individu</a>
+            <a><span class="badge">2</span> Masukkan Identifikasi</a>
+            <a><span class="badge">3</span> Masukkan Observasi</a>
+            <a><span class="badge">4</span> Masukkan Gambar</a>
+        </div>
+        
+        <!-- FORM INDIV -->
+            {$msg}
+            <div class="msg"></div>
+            <form id="formIndiv" method="POST" action="{$basedomain}onebyone/insertIndiv" class="form-horizontal" role="form">
+                {include file="file:$rootpath/app/view/onebyone/formIndiv.html"}
+            </form>
+    </div>
+</div>
+
+<!--START MODAL LOCN-->
+<div class="modal fade" id="modal-location" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Tutup</span></button>
+        <h4 class="modal-title" id="myModalLabel">Masukkan Lokasi</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formLocation" method="POST" action="{$basedomain}onebyone/insertLocation" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/onebyone/formLocation.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

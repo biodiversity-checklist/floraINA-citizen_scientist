@@ -1,0 +1,9 @@
+config/config.php
+config/access.php
+.htaccess
+tmp/*
+public_assets/*
+libs/smarty/*
+libs/excel/*
+logs/*
+CACHE/*

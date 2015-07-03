@@ -1,0 +1,339 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+    {$msg}
+    
+    {if $noData eq 'empty'}
+        <a href="#" class="btn florakb-btn pull-right" onClick="history.back();return false;"><span class="glyphicon glyphicon-chevron-left"></span> Kembali</a>
+        <br />
+        <i>No data available</i>
+    {else}
+    
+    <a href="#" class="btn florakb-btn pull-right" onClick="history.back();return false;"><span class="glyphicon glyphicon-chevron-left"></span> Kembali</a>
+    <div class="clearfix"></div><br />
+    
+    <div class="florakb-tabs">
+        <!--<h3>Species Name</h3>-->
+        <ul class="nav nav-tabs" role="tablist" id="editIndiv-tabs">
+          <li class="active"><a href="#overview" role="tab" data-toggle="tab">Ringkasan</a></li>
+          <li><a href="#obs" role="tab" data-toggle="tab">Observasi</a></li>
+          <li><a href="#det" role="tab" data-toggle="tab">Determinasi</a></li>
+          <li><a href="#img" role="tab" data-toggle="tab">Gambar</a></li>
+        </ul>
+    </div>
+    
+    <div class="tab-content">
+      <div class="tab-pane active" id="overview">
+        <div class="florakb-tabscontent">
+            <form id="aa" method="POST" action="{$basedomain}browse/doEditIndiv/?id={$smarty.get.id}" class="form-horizontal" role="form">
+                {include file="file:$rootpath/app/view/editIndiv/formIndiv.html"}
+            </form>
+        </div>
+      </div><!-- END TAB OVERVIEW-->
+      
+      <div class="tab-pane" id="obs">
+        <div class="florakb-tabscontent">
+            <table id="table-obs" class="table table-striped table-bordered flora-table table-curved" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Pencipta</th>
+                        <th>Tanggal</th>
+                        <th>Microhab</th>
+                        <th>Habit</th>
+                        <th>dbh</th>
+                        <th>Tinggi</th>
+                        <th>Bud</th>
+                        <th>Bunga</th>
+                        <th>Buah</th>
+                        <th>Nama Lokal</th>
+                        <th>Catatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+         
+                <tbody>
+                    {foreach $indiv as $dataIndiv}
+                    {foreach from=$obs key=myId item=dataObs}
+                    <tr>
+                        <td>
+                            {if $user.login && $dataObs.personID == $user.login.id && $dataIndiv.name != $user.login.name}
+                                <a href="{$basedomain}browse/deleteObs/?id={$dataObs.obsID}&&indivID={$dataObs.indivID}&&action=delObs" id="deleteObsOwner" class="florakb-delete" title="Delete Observation"><span class="glyphicon glyphicon-remove-sign pull-right"></span></a>
+                            {/if}
+                            {$dataObs.name}
+                        </td>
+                        <td>{$dataObs.date}</td>
+                        <td>{$dataObs.microhab}</td>
+                        <td>{$dataObs.habit}</td>
+                        <td>{$dataObs.dbh}</td>
+                        <td>{$dataObs.height}</td>
+                        <td class="text-center"><span class="glyphicon glyphicon-{if {$dataObs.bud} eq 'yes'}ok{else}remove{/if}"></span></td>
+                        <td class="text-center"><span class="glyphicon glyphicon-{if {$dataObs.flower} eq 'yes'}ok{else}remove{/if}"></span></td>
+                        <td class="text-center"><span class="glyphicon glyphicon-{if {$dataObs.fruit} eq 'yes'}ok{else}remove{/if}"></span></td>
+                        <td>{$dataObs.localname}</td>
+                        <td>{$dataObs.notes}</td>
+                        <td>
+                            {if $user.login && $dataObs.personID eq $user.login.id || $dataIndiv.id eq $user.login.id}
+                                <a href="{$basedomain}browse/deleteObs/?id={$dataObs.obsID}&&indivID={$dataObs.indivID}&&action=delObsOwn" id="deleteObs" class="btn florakb-btn">Hapus</a>
+                            {/if}
+                        </td>
+                    </tr>
+                    {foreachelse}<i>Tidak ada data observasi</i>
+                    {/foreach}
+                    {/foreach}
+                </tbody>
+            </table>
+             <a href="#addObs" class="btn florakb-btn pull-right" data-toggle="modal" data-target="#modal-obs">Tambah Observasi</a>
+             <div class="clearfix"></div>
+            </div>
+      </div><!-- END TAB OBS-->
+      
+      <div class="tab-pane" id="det">
+        <div class="florakb-tabscontent">
+            <table id="table-det" class="table table-striped table-bordered flora-table table-curved" cellspacing="0" width="100%">
+                <thead>
+                    <tr>
+                        <th>Pencipta</th>
+                        <th>Tanggal</th>
+                        <th>Taxon</th>
+                        <th>Konfidensi</th>
+                        <th>Sumber Daya</th>
+                        <th>Catatan</th>
+                        <th style="width: 7%;">Aksi</th>
+                    </tr>
+                </thead>
+         
+                <tbody>
+                {foreach $indiv as $dataIndiv}
+                {foreach from=$det key=myId item=dataDet}
+                    <tr>
+                        <td>
+                            {if $user.login && $dataDet.personID == $user.login.id && $dataIndiv.name != $user.login.name}
+                                <a href="{$basedomain}browse/deleteDet/?id={$dataDet.detID}&&indivID={$dataDet.indivID}&&action=delDet" id="deleteDetOwner" class="florakb-delete" title="Delete Determinant"><span class="glyphicon glyphicon-remove-sign pull-right"></span></a>
+                            {/if}
+                            {$dataDet.name}
+                        </td>
+                        <td>{$dataDet.det_date}</td>
+                        <td>
+                            {if {$dataDet.sp}=='' AND {$dataDet.gen}=='' AND {$dataDet.fam}==''}
+                            {else}
+                            <i>{$dataDet.sp}, {$dataDet.gen}, {$dataDet.fam}</i>
+                            {/if}
+                        </td>
+                        <td>{$dataDet.confid}</td>
+                        <td>{$dataDet.using}</td>
+                        <td>{$dataDet.notes}</td>
+                        <td>
+                            {if $user.login && $dataDet.personID eq $user.login.id || $dataIndiv.id eq $user.login.id}
+                                <a href="{$basedomain}browse/deleteDet/?id={$dataDet.detID}&&indivID={$dataDet.indivID}&&action=delDetOwn" id="deleteDet" class="btn florakb-btn pull-right">Hapus</a>
+                                <div class="clearfix"></div>
+                            {/if}
+                        </td>
+                    </tr>
+                {foreachelse}<i>Tidak ada data determinasi</i>
+                {/foreach}
+                {/foreach}
+                </tbody>
+            </table>
+            <a href="#addDet" class="btn florakb-btn pull-right" data-toggle="modal" data-target="#modal-det">Tambah Determinasi</a>
+             <div class="clearfix"></div>
+        </div>
+      </div><!-- END TAB DET-->
+      
+      <div class="tab-pane" id="img">
+        <div class="florakb-tabscontent">
+            <div id="links">
+            {foreach $img as $dataImg}
+            {if $dataImg.md5sum}
+                <form id="formImg" method="POST" action="{$basedomain}browse/deleteImg/?indivID={$smarty.get.id}&&action=delImgOwn">
+                    <input type="checkbox" name="idImg[]" value="{$dataImg.id}" />
+                    <a href="{$basedomain}public_assets/img/500px/{$dataImg.md5sum}.500px.jpg" data-gallery>
+                        <img src="{$basedomain}public_assets/img/100px/{$dataImg.md5sum}.100px.jpg" class="flora-gallery">
+                    </a>
+            {/if}
+            {foreachelse}<i>Tidak ada gambar</i>
+            {/foreach}
+                    <br /><br />
+                    <div class="pull-left">
+                        <input type="submit" id="deleteImg" class="btn florakb-btn" value="Hapus Gambar" />
+                        <a href="#addImg" class="btn florakb-btn" data-toggle="modal" data-target="#modal-img">Tambah Gambar</a>
+                    </div>
+                    <div class="clearfix"></div>
+                </form>    
+            </div>
+        </div>
+      </div><!-- END TAB IMG-->
+      
+    </div>
+    {/if}
+    </div>
+</div>
+
+<!--START MODAL OBS-->
+<div class="modal fade" id="modal-obs" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Observasi</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formObs_browse" method="POST" action="{$basedomain}browse/addObs/?id={$smarty.get.id}&&action=addObs" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/editIndiv/modal_formObs.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--START MODAL LOCN-->
+<div class="modal fade" id="modal-location" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Lokasi</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formLocation" method="POST" action="{$basedomain}onebyone/insertLocation" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/onebyone/formLocation.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--START MODAL DET-->
+<div class="modal fade" id="modal-det" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Determinasi</h4>
+      </div>
+      <div class="modal-body">
+        {$msg}
+        <div class="msg"></div>
+        <form id="formDet" method="POST" action="{$basedomain}browse/addDet/?id={$smarty.get.id}&&action=addDet" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/editIndiv/modal_formDet.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--START MODAL PERSON-->
+<div class="modal fade" id="modal-person" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Orang</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formPerson" method="POST" action="{$basedomain}onebyone/insertPerson" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/onebyone/formPerson.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--START MODAL TAXON-->
+<div class="modal fade" id="modal-taxon" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Taxon</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formTaxon" method="POST" action="{$basedomain}onebyone/insertTaxon" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/onebyone/formTaxon.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--START MODAL IMG-->
+<div class="modal fade" id="modal-img" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Tambah Gambar</h4>
+      </div>
+      <div class="modal-body">
+        <form id="formImage" method="POST" action="{$basedomain}browse/addImg/?id={$smarty.get.id}" enctype="multipart/form-data" class="form-horizontal" role="form">
+            {include file="file:$rootpath/app/view/editIndiv/modal_formImage.html"}
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Bootstrap Image Gallery lightbox, should be a child element of the document body -->
+<div id="blueimp-gallery" class="blueimp-gallery" data-use-bootstrap-modal="false">
+    <!-- The container for the modal slides -->
+    <div class="slides"></div>
+    <!-- Controls for the borderless lightbox -->
+    <h3 class="title"></h3>
+    <a class="prev">‹</a>
+    <a class="next">›</a>
+    <a class="close">×</a>
+    <a class="play-pause"></a>
+    <ol class="indicator"></ol>
+    <!-- The modal dialog, which will be used to wrap the lightbox content -->
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body next"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left prev">
+                        <i class="glyphicon glyphicon-chevron-left"></i>
+                        Previous
+                    </button>
+                    <button type="button" class="btn btn-primary next">
+                        Next
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<literal>
+    <script>
+        $(document).on('click','#deleteObs', function(){
+            var msg = confirm('Apakah Anda yakin ingin menghapus data ?');
+            if (!msg) return false;    
+        });
+        $(document).on('click','#deleteDet', function(){
+            var msg = confirm('Apakah Anda yakin ingin menghapus data ?');
+            if (!msg) return false;    
+        });
+        $(document).on('click','#deleteImg', function(){
+            var msg = confirm('Apakah Anda yakin ingin menghapus data ?');
+            if (!msg) return false;    
+        });
+        
+        var ID = {$indivID};
+        
+        if(document.URL==basedomain+'browse/editIndiv/?id='+ID+'#obs'){
+            $('#editIndiv-tabs a[href="#obs"]').tab('show');
+        }
+        else if(document.URL==basedomain+'browse/editIndiv/?id='+ID+'#det'){
+            $('#editIndiv-tabs a[href="#det"]').tab('show');
+        }
+        else if(document.URL==basedomain+'browse/editIndiv/?id='+ID+'#img'){
+            $('#editIndiv-tabs a[href="#img"]').tab('show');
+        }
+        else{
+            $('#editIndiv-tabs a[href="#overview"]').tab('show');
+        }
+    </script>
+</literal>

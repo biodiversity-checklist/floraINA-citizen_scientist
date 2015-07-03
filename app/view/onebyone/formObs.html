@@ -1,0 +1,136 @@
+<div class="form-group">
+    <label for="microhab" class="col-sm-3 control-label">Microhab</label>
+    <div class="col-sm-5">
+        <input class="form-control" type="text" id="microhab" name="microhab" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="habit" class="col-sm-3 control-label">Habit (*)</label>
+    <div class="col-sm-5">
+        <select class="form-control" name="habit" id="habit">
+            <option value="" selected="1">Choose Habit</option>
+            {foreach from=$habit_enum item=enum}
+                <option value="{$enum}">{$enum}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="dbh" class="col-sm-3 control-label">Dbh</label>
+    <div class="col-sm-5">
+        <input class="form-control" type="text" id="dbh" name="dbh" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="height" class="col-sm-3 control-label">Height</label>
+    <div class="col-sm-5">
+        <input class="form-control" type="text" id="height" name="height" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="" class="col-sm-3 control-label">Bud (*)</label>
+    <div class="col-sm-5">
+        <label class="radio-inline">
+            <input type="radio" name="bud" value="yes" />Yes
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="bud" value="no" />No
+        </label>
+        <label for="bud" class="error"></label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="" class="col-sm-3 control-label">Bunga (*)</label>
+    <div class="col-sm-5">
+        <label class="radio-inline">
+            <input type="radio" name="flower" value="yes" />Yes
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="flower" value="no" />No
+        </label>
+        <label for="flower" class="error"></label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="" class="col-sm-3 control-label">Buah (*)</label>
+    <div class="col-sm-5">
+        <label class="radio-inline">
+            <input type="radio" name="fruit" value="yes" />Yes
+        </label>
+        <label class="radio-inline">
+            <input type="radio" name="fruit" value="no" />No
+        </label>
+        <label for="fruit" class="error"></label>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="localname" class="col-sm-3 control-label">Nama lokal</label>
+    <div class="col-sm-5">
+        <input class="form-control" type="text" id="localname" name="localname" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="notes" class="col-sm-3 control-label">Catatan</label>
+    <div class="col-sm-5">
+        <textarea class="form-control" id="notes" name="notes"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-3 control-label">(*) harus diisi</label>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-3 col-sm-6">
+      <button type="submit" class="btn florakb-btn">Submit</button>
+    </div>
+</div>
+<script type="text/javascript">
+$().ready(function() {
+    
+    $("#formObs").validate({
+        rules: {
+			habit: {
+                required: true
+			},
+            dbh: {
+                Decimal: true
+            },
+            height: {
+                Decimal: true
+            },
+            bud: {
+                required: true
+            },
+            flower: {
+                required: true
+            },
+            fruit: {
+                required: true
+            }
+		},
+		messages: {
+            habit: {
+                required: "  Harap pilih habit"
+			},
+            bud: {
+                required: "&nbsp;&nbsp;&nbsp;&nbsp;Harap pilih opsi"
+            },
+            flower: {
+                required: "&nbsp;&nbsp;&nbsp;&nbsp;Harap pilih opsi"
+            },
+            fruit: {
+                required: "&nbsp;&nbsp;&nbsp;&nbsp;Harap pilih opsi"
+            }
+		}
+    });
+});
+</script>

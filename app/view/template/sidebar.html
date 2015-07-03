@@ -1,0 +1,31 @@
+<!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+<div class="collapse navbar-collapse navbar-ex1-collapse navbar-inverse">
+    <ul class="nav navbar-nav florakb-nav side-nav">
+        <li class="{if $page.page=='home'}active{/if}">
+            <a href="{$basedomain}">Dashboard</a>
+        </li>
+        {if $page.page !='activate'}
+        <li class="{if $page.page=='upload'}active{/if}">
+            <a href="{$basedomain}upload">Batch Upload</a>
+        </li>
+        <li class="{if $page.page=='onebyone'}active{/if}">
+            <a href="{$basedomain}onebyone/indivContent">One by one</a>
+        </li>
+        <li class="{if $page.page=='browse'}active{/if}">
+            <a href="javascript:;" data-toggle="collapse" data-target="#demo" class="collapsed">Browse <b class="caret"></b></a>
+            <ul id="demo" class="collapse" style="height: 0px;">
+                <li>
+                    <a href="{$basedomain}browse/dataTaxon">Data Taxa</a>
+                </li>
+                <li>
+                    <a href="{$basedomain}browse/dataLocation">Data Location</a>
+                </li>
+                <li>
+                    <a href="{$basedomain}browse/dataPerson">Data Person</a>
+                </li>
+            </ul>
+        </li>
+        {/if}
+    </ul>
+</div>
+<!-- /.navbar-collapse -->

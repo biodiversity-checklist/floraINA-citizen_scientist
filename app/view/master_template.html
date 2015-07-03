@@ -1,0 +1,34 @@
+{if $page.page=='login' or $page.page=='register' }
+    {include file="template/meta_login.html"} 
+{else}
+    {include file="template/meta.html"}
+{/if}
+
+{if $page.page=='register' }
+<body class="signup">
+{else}
+<body>
+{/if}
+
+	<!-- RUNNING GLOBAL VAR -->
+	<script>
+		var basedomain = "{$basedomain}";
+	</script>
+	
+    {if $page.page!='login' and $page.page!='register' }
+        <!-- NAVBAR -->
+        {include file="template/navbar.html"}
+        
+        <!-- SIDEBAR -->
+        {include file="template/sidebar.html"}    
+    {/if}
+        
+    	<!-- CONTENT -->
+    	{$content}
+	
+    
+	<!-- FOOTER -->
+    {include file="template/footer.html"}
+	
+</body> 
+</html>

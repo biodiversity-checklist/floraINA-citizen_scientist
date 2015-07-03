@@ -1,0 +1,88 @@
+{literal}
+<script language='javascript' type='text/javascript'>
+
+$().ready(function() {
+    
+    $("#validateAccount").validate({
+        rules: {
+            username: {
+                required: true,
+                
+            },
+            newPassword: {
+                required: true
+            },
+            rePassword:{
+                required: true,
+                equalTo: "#newPassword"
+            }
+        }
+    });
+    
+});
+
+$(document).on('blur','#username', function(){
+    var username = $(this).val();
+    $.post(basedomain+'user/checkUsername', {username:username}, function(data){
+
+        console.log(data);
+        if (!data){
+            $('.fieldExist').html('Username Exist');
+        }
+
+    });
+})
+
+$(document).on('click','.submitData', function(){
+    var newPassword = $('#newPassword').val();
+    var rePassword = $('#rePassword').val();
+
+    if (newPassword !== rePassword){
+        alert('Password not match');
+        return false;
+    }
+})
+
+
+</script>
+{/literal}
+<div class="content">
+    <div class="sidebar-2-left">
+        <ul>
+            <li>Profile</li>
+            <li><a href="#">Validate Profile</a></li>
+           
+        </ul>
+    </div>
+    
+    <div class="sidebar-2-right">
+        <h2 class="title">Validate Profile</h2>
+        {*}{$msg}{/*}
+        <form id="validateAccount" method="POST" action="{$basedomain}activate/accountValid">
+            <table class="form-tbl">
+                <tr>
+                    <td><label for="username">Username</label></td>
+                    <td><input class="inputbox" type="username" id="username" name="username" /><span class="fieldExist"></span></td>
+                </tr>
+                <tr>
+                    <td><label for="newPassword">New Password</label></td>
+                    <td><input class="inputbox" type="password" id="newPassword" name="newPassword" /></td>
+                </tr>
+                <tr>
+                    <td><label for="rePassword">Retype Password</label></td>
+                    <td><input class="inputbox" type="password" id="rePassword" name="rePassword" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="hidden" value="1" name="token"/>
+                        <input type="hidden" value="{$email}" name="email"/>
+                        <input class="btn submitData" type="submit" value="Submit" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    
+    <div class="clear"></div>
+</div>

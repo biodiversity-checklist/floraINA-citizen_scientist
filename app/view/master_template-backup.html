@@ -1,0 +1,41 @@
+{include file="template/meta.html"}
+<body>
+	<!-- RUNNING GLOBAL VAR -->
+	<script>
+		var basedomain = "{$basedomain}";
+	</script>
+	
+	<!-- HEADER -->
+    <header>
+		{include file="template/header.html"}
+		
+	</header>
+    
+    <!-- NAVIGATION MENU -->
+    <nav>
+		{include file="template/menu.html"}
+		
+	</nav>
+	
+	
+	<!-- CONTENT -->
+	<main>
+	<div class="wrapper">
+		
+		{$content}
+	</div>
+	</main>
+    
+    <!-- MODAL -->
+	{include file="modal.html"}
+   
+	
+	
+	<!-- FOOTER -->
+    <footer>
+		{include file="template/footer.html"}
+		
+	</footer>
+	
+</body> 
+</html>

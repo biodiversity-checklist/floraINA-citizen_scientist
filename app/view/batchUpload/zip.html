@@ -1,0 +1,30 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+        <h3>Batch Upload</h3>
+        
+        <!-- STEP WIZARD -->
+        <div class="wizard">
+            <a><span class="badge">1</span> Informasi</a>
+            <a><span class="badge">2</span> Upload Excel</a>
+            <a class="current"><span class="badge">3</span> Extract Zip</a>
+        </div>
+        
+        <!-- FORM ZIP -->
+        <div class="message"></div>
+        <div class="errorbox"></div>
+        <form onsubmit="zipExtract();return false;" id="extract_zip" method="POST" action="" class="form-horizontal" role="form"> <!-- zipExtract();return false; / http://localhost/florakb/zip/extract-->
+            <div class="form-group">
+                <label for="zip_file" class="col-sm-4 control-label">Filename<br /><i>(with zip extention ex. User-date.zip)</i></label>
+                <div class="col-sm-5">
+                    <input class="form-control" name="imagezip" id="zip_file" type="text" />
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-5">
+                  <button type="submit" class="btn florakb-btn" id="box_button">Submit</button>
+                </div>
+            </div> 
+        </form>
+    </div>
+</div>

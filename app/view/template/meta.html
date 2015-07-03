@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Bootstrap core CSS -->
+    <link href="{$basedomain}plugin/bootstrap-3.1.1/css/bootstrap.css" rel="stylesheet">
+    
+    <!-- Custom FloraKalbar CSS-->
+    <link href="{$basedomain}assets/css/custom-florakb.css" rel="stylesheet" type="text/css"/>
+    
+    <!-- FLASH MESSAGES CSS-->
+    <link rel="stylesheet" type="text/css" href="{$basedomain}assets/css/messages.css"/>
+    
+    <!-- JQuery UI CSS-->
+    <link rel="stylesheet" type="text/css" href="{$basedomain}assets/css/jquery-ui.css"/>
+    
+    <!-- JQuery Validation CSS-->
+    <link rel="stylesheet" type="text/css" href="{$basedomain}plugin/jquery-validation-1.13.0/css/screen.css"/>
+    
+    <!-- Bootstrap Image Gallery CSS -->
+    <link rel="stylesheet" href="{$basedomain}plugin/bootstrap-image-gallery-3.1.1/css/bootstrap-image-gallery.min.css">
+    <link rel="stylesheet" href="{$basedomain}plugin/bootstrap-image-gallery-3.1.1/css/blueimp-gallery.min.css">
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{$basedomain}plugin/datatable/css/dataTables.bootstrap.css">
+    
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <!-- Jquery JS -->
+    <script type="text/javascript" src="{$basedomain}assets/js/jquery-2.1.0.min.js"></script>
+    
+    <!-- Jquery UI JS -->
+    <script type="text/javascript" src="{$basedomain}assets/js/jquery-ui.js"></script>
+    
+    <!-- Bootstrap JS -->
+    <script src="{$basedomain}plugin/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+    
+    <!--JQuery Validation JSS -->
+    <script type="text/javascript" src="{$basedomain}plugin/jquery-validation-1.13.0/js/jquery.form.js"></script>
+    <script type="text/javascript" src="{$basedomain}plugin/jquery-validation-1.13.0/js/jquery.validate.min.js"></script>
+    
+    <!-- Bootstrap Image Gallery JS -->
+    <script src="{$basedomain}plugin/bootstrap-image-gallery-3.1.1/js/jquery.blueimp-gallery.min.js"></script>
+    <script src="{$basedomain}plugin/bootstrap-image-gallery-3.1.1/js/bootstrap-image-gallery.min.js"></script>
+    
+    <!-- Datatables JS -->
+    <script src="{$basedomain}plugin/datatable/js/jquery.dataTables.min.js"></script>
+    <script src="{$basedomain}plugin/datatable/js/dataTables.bootstrap.js"></script>
+    
+    <!-- Custom FloraKalbar JS-->
+    <script type="text/javascript" src="{$basedomain}assets/js/ajaxLogin.js"></script>
+    <script type="text/javascript" src="{$basedomain}assets/js/ajaxUpload.js"></script>
+    <script type="text/javascript" src="{$basedomain}assets/js/globalHelper.js"></script>
+    
+    
+    <title>Flora-kalbar</title>
+</head>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        baseUrl = "{$basedomain}";
+        // INITIATE GALLERY PLUGIN
+        $('#blueimp-gallery').toggleClass('blueimp-gallery-controls', true);
+        
+        // INITIATE DATATABLE
+        $('#allTaxon, #allLocation, #table-obs, #table-det').dataTable({
+            "language": {
+                "sProcessing":   "Sedang memproses...",
+                "sLengthMenu":   "Tampilkan _MENU_ entri",
+                "sZeroRecords":  "Tidak ditemukan data yang sesuai",
+                "sInfo":         "Menampilkan _START_ sampai _END_ dari _TOTAL_ entri",
+                "sInfoEmpty":    "Menampilkan 0 sampai 0 dari 0 entri",
+                "sInfoFiltered": "(disaring dari _MAX_ entri keseluruhan)",
+                "sInfoPostFix":  "",
+                "sSearch":       "Cari:",
+                "sUrl":          "",
+                "oPaginate": {
+                    "sFirst":    "Pertama",
+                    "sPrevious": "Sebelumnya",
+                    "sNext":     "Selanjutnya",
+                    "sLast":     "Terakhir"
+                }
+            }
+        });
+        
+        // INITIATE TABS
+            //$('#indivDetail-tabs a:first').tab('show');
+    });
+</script>

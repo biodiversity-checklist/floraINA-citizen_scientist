@@ -1,0 +1,97 @@
+<div class="form-group">
+    <label for="morphotype" class="col-sm-4 control-label">Morphotype</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="morphotype" name="morphotype" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="fam" class="col-sm-4 control-label">Famili</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="fam" name="fam" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="gen" class="col-sm-4 control-label">Genus</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="gen" name="gen" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="sp" class="col-sm-4 control-label">Spesies</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="sp" name="sp" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="subtype" class="col-sm-4 control-label">Subtype</label>
+    <div class="col-sm-6">
+        <select class="form-control" name="subtype" id="subtype">
+            <option value="" selected="1">Pilih subtype</option>
+            {foreach from=$subtype_enum item=enum}confid
+                <option value="{$enum}">{$enum}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="ssp" class="col-sm-4 control-label">Sub Spesies</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="ssp" name="ssp" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="auth" class="col-sm-4 control-label">Author</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="auth" name="auth" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="notes" class="col-sm-4 control-label">Catatan</label>
+    <div class="col-sm-6">
+        <textarea class="form-control" id="notes" name="notes"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-4 col-sm-6">
+      <button type="submit" class="btn florakb-btn">Submit</button>
+    </div>
+</div>
+
+<script language='javascript' type='text/javascript'>
+$().ready(function() {
+    
+    $("#formTaxon").validate({
+        submitHandler: function(form){
+            do_ajax(form,"formTaxon","#modal-taxon", "Taxon");
+        },
+        rules: {
+            gen: {
+                required: function(element) {
+                    return (!$("#morphotype").hasClass('valid'));
+                }
+            },
+            sp: {
+                required: function(element) {
+                    return (!$("#morphotype").hasClass('valid'));
+                }
+            }
+		},
+		messages: {
+            gen: {                            
+                required: " Harap masukkan genus dan spesies atau masukkan morphotype"
+            },
+            sp: {
+                required: " Harap masukkan genus dan spesies atau masukkan morphotype"
+            }
+		}
+    });
+});
+</script>

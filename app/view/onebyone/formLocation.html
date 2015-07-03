@@ -1,0 +1,135 @@
+<div class="form-group">
+    <label for="longitude" class="col-sm-4 control-label">Longitude</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="longitude" name="longitude" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="latitude" class="col-sm-4 control-label">Latitude</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="latitude" name="latitude" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="elev" class="col-sm-4 control-label">Elevasi ASL (m)</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="elev" name="elev" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="geomorph" class="col-sm-4 control-label">Geomorph</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="geomorph" name="geomorph" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="locality" class="col-sm-4 control-label">Lokalitas<br /><span style="font-weight: lighter; font-size: 12px;"><i>(Nama deskriptif)</i></span></label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="locality" name="locality" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="county" class="col-sm-4 control-label">County</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="county" name="county" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="province" class="col-sm-4 control-label">Provinsi</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="province" name="province" value="Kalimantan Barat" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="island" class="col-sm-4 control-label">Pulau</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="island" name="island" value="Borneo" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="country" class="col-sm-4 control-label">Negara</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="country" name="country" value="Indonesia" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="notes" class="col-sm-4 control-label">Catatan</label>
+    <div class="col-sm-6">
+        <textarea class="form-control" id="notes" name="notes"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-4 col-sm-6">
+      <button type="submit" class="btn florakb-btn">Submit</button>
+    </div>
+</div> 
+
+<script language='javascript' type='text/javascript'>
+$().ready(function() {
+    
+    $("#formLocation").validate({
+        submitHandler: function(form){
+            do_ajax(form,"formLocation","#modal-location", "Lokasi");
+        },
+        rules: {
+            longitude: {
+                required: true,
+                number: true
+            },
+            latitude: {
+                required: true,
+                number: true
+            },
+			locality: {
+                required: true
+			},
+            elev: {
+                required: true,
+                number: true
+            },
+            province: {
+                required: true
+            },
+            island: {
+                required: true
+            },
+            country: {
+                required: true
+            }
+		},
+		messages: {
+            longitude: {
+                required: " Harap Masukkan longitude"
+            },
+            latitude: {
+                required: " Harap Masukkan latitude"
+            },
+			locality: {
+                required: " Harap Masukkan lokalitas"
+			},
+            elev: {
+                required: " Harap Masukkan elevasi"
+            },
+            province: {
+                required: " Harap Masukkan provinsi"
+            },
+            island: {
+                required: " Harap Masukkan pulau"
+            },
+            country: {
+                required: " Harap Masukkan negara"
+            }
+		}
+    });
+});
+</script>

@@ -1,0 +1,50 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+        <h3>Insert One By One</h3>
+        
+        <!-- STEP WIZARD -->
+        <div class="wizard">
+            <a><span class="badge">1</span> Masukkan Individu</a>
+            <a><span class="badge">2</span> Masukkan Identifikasi</a>
+            <a><span class="badge">3</span> Masukkan Observasi</a>
+            <a class="current"><span class="badge">4</span> Masukkan Gambar</a>
+        </div>
+        
+        <!-- FORM INDIV -->
+            {$msg}
+            <div class="msg"></div>
+            <form id="formImage" method="POST" action="{$basedomain}onebyone/insertImage" enctype="multipart/form-data" class="form-horizontal" role="form">
+                {include file="file:$rootpath/app/view/onebyone/formImage.html"}
+            </form>
+    
+
+
+    
+{if isset($image_sess)}
+{if $image_sess}
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Filename</th>
+                <th>Plantpart</th>
+                <th>Notes</th>
+                <th>Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            {foreach $image_sess as $imageData}
+            <tr>
+                <td>{$imageData.filename}</td>
+                <td>{$imageData.plantpart}</td>
+                <td>{$imageData.notes}</td>
+                <td><img src="{$basedomain}/public_assets/img/100px/{$imageData.md5sum}.100px.jpg" /></td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    <a href="{$basedomain}onebyone/indivContent" class="btn florakb-btn pull-right">Masukkan Individu Lain</a>
+{/if}
+{/if}
+    </div>
+</div>
+

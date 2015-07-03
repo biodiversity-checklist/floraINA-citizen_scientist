@@ -1,0 +1,112 @@
+<div class="form-group">
+    <label for="name" class="col-sm-4 control-label">Nama</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="name" name="name" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="email" class="col-sm-4 control-label">Email</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="email" name="email" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="institutions" class="col-sm-4 control-label">Institusi</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="institutions" name="institutions" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="project" class="col-sm-4 control-label">Proyek</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="project" name="project" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="twitter" class="col-sm-4 control-label">Twitter</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="twitter" name="twitter" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="website" class="col-sm-4 control-label">Website</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="website" name="website" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="phone" class="col-sm-4 control-label">Telepon</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="text" id="phone" name="phone" />
+    </div>
+</div>
+
+<!--<tr>
+        <td><label for="username">Username</label></td>
+        <td><input class="form-control" type="text" id="username" name="username" /></td>
+    </tr>-->
+
+<div class="form-group">
+    <div class="col-sm-offset-4 col-sm-6">
+      <button type="submit" class="btn florakb-btn">Submit</button>
+    </div>
+</div>
+
+<script language='javascript' type='text/javascript'>
+$().ready(function() {
+    
+    $("#formPerson").validate({
+        submitHandler: function(form){
+            do_ajax(form,"formPerson","#modal-person", "Person");
+        },
+        rules: {
+			name: {
+                required: true,
+                checkNameExist: true
+			},
+			email: {
+				required: true,
+				email: true,
+                checkEmailExist: true
+			},
+			twitter: {
+				minlength: 2,
+                checkTwitterExist: true
+			},
+			website: {
+                url: true
+			},
+            username: {
+                required: true,
+                minlength: 3,
+                checkUsernameExist: true
+            }
+		},
+		messages: {
+			name: {
+                required: " Harap masukkan nama"
+			},
+			email: {
+                required: " Harap masukkan email yang valid"
+			},
+			twitter: {
+				minlength: " Harap masukkan akun twitter yang valid"
+			},
+			website: {
+				url: " Harap masukkan url yang valid"
+			},
+            username: {
+                required: " Harap masukkan username",
+                minlength: " Username anda harus lebih dari 3 karakter",
+                checkUsernameExist: " Username sudah terdaftar"
+            }
+		}
+    });
+});
+</script>

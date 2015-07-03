@@ -1,0 +1,51 @@
+<div class="form-group">
+    <label for="filename" class="col-sm-4 control-label">File Gambar (*)</label>
+    <div class="col-sm-6">
+        <input class="form-control" type="file" id="filename" name="filename" />
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="plantpart" class="col-sm-4 control-label">Bagian Tanaman</label>
+    <div class="col-sm-6">
+        <select class="form-control" name="plantpart" id="plantpart">
+            {foreach from=$plantpart_enum item=enum}
+                <option value="{$enum}">{$enum}</option>
+            {/foreach}
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="notes" class="col-sm-4 control-label">Catatan</label>
+    <div class="col-sm-6">
+        <textarea class="form-control" id="notes" name="notes"></textarea>
+    </div>
+</div>
+
+<div class="form-group">
+    <label class="col-sm-3 control-label">(*) harus diisi</label>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-6">
+      <button type="submit" class="btn florakb-btn">Submit</button>
+    </div>
+</div>
+<script language='javascript' type='text/javascript'>
+$().ready(function() {
+    
+    $("#formImage").validate({
+        rules: {
+			filename: {
+				required: true
+			}
+		},
+		messages: {
+			filename: {
+                required: " Please choose an image file"
+			}
+		}
+    });
+});
+</script>

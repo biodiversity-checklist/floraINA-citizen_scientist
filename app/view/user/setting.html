@@ -1,0 +1,203 @@
+<script language='javascript' type='text/javascript'>
+$().ready(function() {
+    
+    $("#formEditPerson").validate({
+        rules: {
+			name: {
+                required: true,
+                checkNameExist: {
+                    depends: function(element) {
+                        // Do what you want to test
+                        return $('#name').val()!='{$user.login.name}';
+                      }
+                }
+			},
+			email: {
+				required: true,
+				email: true,
+                checkEmailExist: {
+                    depends: function(element) {
+                        // Do what you want to test
+                        return $('#email').val()!='{$user.login.email}';
+                      }
+                }
+			},
+            /*username: {
+				required: true,
+                alphanumeric: true,
+                checkUsernameExist: {
+                    depends: function(element) {
+                        // Do what you want to test
+                        return $('#username').val()!='{$user.login.username}';
+                      }
+                }
+			},*/
+			twitter: {
+				minlength: 2,
+                checkTwitterExist: {
+                    depends: function(element) {
+                        // Do what you want to test
+                        return $('#twitter').val()!='{$user.login.twitter}';
+                      }
+                }
+			},
+			website: {
+                url: true
+			}
+		},
+		messages: {
+			name: {
+                required: " Please enter a name"
+			},
+			email: {
+                required: " Please enter a valid email address"
+			},
+            /*username: {
+                required: " Please enter a username"
+			},*/
+			twitter: {
+				minlength: " Please enter a valid twitter account"
+			},
+			website: {
+				url: " Please enter a valid url"
+			}
+		}
+    });
+    
+    $("#formEditPassword").validate({
+        rules: {
+			password: {
+                required: true,
+                checkPassword: true
+            },
+            newPassword: {
+                required: true
+            },
+            rePassword:{
+                required: true,
+                equalTo: "#newPassword"
+            }
+		}
+    });
+    
+});
+</script>
+
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+        {$msg}
+        
+        <div class="florakb-tabs">
+            <ul class="nav nav-tabs" role="tablist" id="indivDetail-tabs">
+              <li class="active"><a href="#editProfile" role="tab" data-toggle="tab">Sunting Profil</a></li>
+              <li><a href="#editPassword" role="tab" data-toggle="tab">Sunting Password</a></li>
+            </ul>
+        </div>
+        
+        <div class="tab-content">
+          <div class="tab-pane active" id="editProfile">
+            <div class="florakb-tabscontent">
+                <form id="formEditPerson" method="POST" action="{$basedomain}user/doEditProfile" class="form-horizontal" role="form"> 
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">Nama</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="name" name="name" value="{$user.login.name}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="email" id="email" name="email" value="{$user.login.email}" readonly/>
+                        </div>
+                    </div>
+                    
+                    <!--<div class="form-group">
+                        <label for="username" class="col-sm-2 control-label">Email</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="username" name="username" value="{$user.login.username}" />
+                        </div>
+                    </div>-->
+                    
+                    <div class="form-group">
+                        <label for="institutions" class="col-sm-2 control-label">Institusi</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="institutions" name="institutions" value="{$user.login.institutions}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project" class="col-sm-2 control-label">Proyek</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="project" name="project" value="{$user.login.project}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="twitter" class="col-sm-2 control-label">Twitter</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="twitter" name="twitter" value="{$user.login.twitter}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="website" class="col-sm-2 control-label">Website</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="text" id="website" name="website" value="{$user.login.website}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone" class="col-sm-2 control-label">Telepon</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="number" id="phone" name="phone" value="{$user.login.phone}" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-5">
+                          <button type="submit" class="btn florakb-btn">Submit</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+          </div><!-- END TAB OVERVIEW-->
+          
+          <div class="tab-pane" id="editPassword">
+            <div class="florakb-tabscontent">
+                <form id="formEditPassword" method="POST" action="{$basedomain}user/doEditPassword" class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="password" class="col-sm-2 control-label">Password Lama</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="password" id="password" name="password" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newPassword" class="col-sm-2 control-label">Password Baru</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="password" id="newPassword" name="newPassword" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rePassword" class="col-sm-2 control-label">Ulangi Password Baru</label>
+                        <div class="col-sm-5">
+                            <input class="form-control" type="password" id="rePassword" name="rePassword" />
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-5">
+                          <button type="submit" class="btn florakb-btn">Submit</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+          </div><!-- END TAB OBS-->
+        </div>
+        
+        
+        
+    </div>
+</div>

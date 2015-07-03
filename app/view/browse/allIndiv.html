@@ -1,0 +1,50 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+    {foreach $title as $dataTitle}
+    {if $dataTitle eq ''}
+    {else}
+        <h3>{$dataTitle.sp}</h3>
+    {/if}
+    {/foreach}
+    
+    <a href="#" class="btn florakb-btn pull-right" onClick="history.back();return false;"><span class="glyphicon glyphicon-chevron-left"></span> Kembali</a>
+    <div class="clearfix"></div><br />
+    
+    <table id="allTaxon" class="table table-striped table-bordered florakb-table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th style="width: 2%;">Kode Indiv</th>
+                <th>Lokasi</th>
+                <th>Pencipta</th>
+                <th class="col-md-5">Gambar</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+ 
+        <tbody>
+            {foreach $data as $dataIndiv}
+            <tr>
+                <td class="text-center">{$dataIndiv.indiv.indivID}</td>
+                <td>{$dataIndiv.indiv.locality}</td>
+                <td>{$dataIndiv.indiv.name}</td>
+                <td>
+                    <div id="links-{$dataIndiv.indiv.indivID}">
+                        {foreach $dataIndiv.img as $img}
+                        {if $img.md5sum}
+                        <a href="{$basedomain}public_assets/img/500px/{$img.md5sum}.500px.jpg" title="{$dataIndiv.indiv.name}" data-gallery="#blueimp-gallery-links-{$dataIndiv.indiv.indivID}">
+                            <img src="{$basedomain}public_assets/img/100px/{$img.md5sum}.100px.jpg" />
+                        </a>
+                        {/if}
+                        {foreachelse}<i>No image available</i>
+                        {/foreach}
+                    </div>
+                </td>
+                <td>
+                    <a href="{$basedomain}browse/indivDetail/?id={$dataIndiv.indiv.indivID}" class="btn florakb-btn">Detail</a>
+                </td>
+            </tr>
+        {/foreach} 
+        </tbody>
+    </table>
+    </div>
+</div>

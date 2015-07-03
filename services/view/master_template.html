@@ -1,0 +1,31 @@
+
+{include file="meta.html"}
+<body>
+	<!-- RUNNING GLOBAL VAR -->
+	<script>
+		var basedomain = "{$basedomain}";
+	</script>
+	
+	<!-- HEADER -->
+    <div id="header">
+		{if $admin}
+		{include file="menu.html"}
+		{/if}
+	</div>
+	
+	
+	<!-- CONTENT -->
+	<div id="body" class="home">
+		{$content}
+		
+	</div>
+	
+	
+	<!-- FOOTER -->
+    <footer id="footer">
+		
+		{include file="footer.html"}
+	</footer>
+	
+</body> 
+</html>

@@ -1,0 +1,79 @@
+
+{if $user.login.name}
+<div class="wrapper">
+<div id="nav-box">
+	<div id="menu">
+        <ul>
+    		<li class="{if $page.page=='home'}selected{/if}">
+    			<a href="{$basedomain}">Home</a>
+    		</li>
+    		{if $page.page!='activate'}
+            <li class="{if $page.page=='upload'}selected{/if}">
+    			<a href="{$basedomain}upload">Batch Upload</a>
+			</li>
+            <li class="{if $page.page=='onebyone'}selected{/if}">
+    			<a href="{$basedomain}onebyone/indivContent">One By One</a>
+    		</li>
+            {/if}
+            <li class="{if $page.page=='browse'}selected{/if}">
+    			<a href="#">Browse</a>
+                <ul>
+    				<li><a href="{$basedomain}browse/dataTaxon">Taxa</a></li>
+    				<li><a href="{$basedomain}browse/dataLocation">Locations</a></li>
+    				<li><a href="{$basedomain}browse/dataPerson">Persons</a></li>
+    			</ul>
+    		</li>
+
+            {*}<li class="{if $page.page=='contact'}selected{/if}">
+    			<a href="{$basedomain}contact">Contact</a>
+    		</li>{/*}
+
+    	</ul>
+    </div>
+<!--    
+	<div id="search-menu">  
+        <form role="form" action="{$basedomain}browse/search/" method="GET">
+            <div class="search-box">
+              <input type="text" placeholder="Search" name="search" />
+              <input class="btn-search" type="submit" value="Search" />
+              
+            </div>
+        </form>
+    </div>
+-->
+    <div class="clear"></div>    
+</div>
+</div>
+{else}
+<div class="wrapper">
+<div id="nav-box">
+	<div id="menu">
+        <ul>
+    		<li class="{if $page.page=='home'}selected{/if}">
+    			<a href="{$basedomain}">Home</a>
+    		</li>
+            <li class="{if $page.page=='browse'}selected{/if}">
+    			<a href="#">Browse</a>
+                <ul>
+    				<li><a href="{$basedomain}browse/dataTaxon">Taxa</a></li>
+    				<li><a href="{$basedomain}browse/dataLocation">Locations</a></li>
+    				<li><a href="{$basedomain}browse/dataPerson">Persons</a></li>
+    			</ul>
+    		</li>
+    	</ul>
+    </div>
+<!--    
+    <div id="search-menu">  
+        <form role="form" action="{$basedomain}browse/search/" method="GET">
+            <div class="search-box">
+              <input type="text" placeholder="Search" name="search" />
+              <input class="btn-search" type="submit" value="Search" />
+              
+            </div>
+        </form>
+    </div>
+-->
+    <div class="clear"></div>    
+</div>
+</div>
+{/if}

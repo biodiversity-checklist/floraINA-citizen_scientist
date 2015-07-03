@@ -1,0 +1,20 @@
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+    <div class="florakb-content">
+        <h3>Insert One By One</h3>
+        
+        <!-- STEP WIZARD -->
+        <div class="wizard">
+            <a><span class="badge">1</span> Masukkan Individu</a>
+            <a><span class="badge">2</span> Masukkan Identifikasi</a>
+            <a class="current"><span class="badge">3</span> Masukkan Observasi</a>
+            <a><span class="badge">4</span> Masukkan Gambar</a>
+        </div>
+        
+        <!-- FORM INDIV -->
+            {$msg}
+            <div class="msg"></div>
+            <form id="formObs" method="POST" action="{$basedomain}onebyone/insertObs" class="form-horizontal" role="form">
+                {include file="file:$rootpath/app/view/onebyone/formObs.html"}
+            </form>
+    </div>
+</div>
