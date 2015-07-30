@@ -1,6 +1,8 @@
 <?php
 
 class browseHelper extends Database {
+
+    var $prefix = "peerkalbar";
 	
     /**
      * @todo retrieve all data from table Taxon
@@ -12,46 +14,15 @@ class browseHelper extends Database {
      */
     function dataTaxon($condition,$field,$value){
         if($condition==true){
-            $sql = "SELECT * FROM `taxon` WHERE $field='$value'";
+            $sql = "SELECT * FROM `{$this->prefix}_taxon` WHERE $field='$value'";
             $res = $this->fetch($sql,1);
             return $res;
         }
         elseif($condition==false){
-            /*$sql = "SELECT * 
-                    FROM `taxon` INNER JOIN `det` ON 
-                    taxon.id=det.taxonID INNER JOIN
-                    `indiv` ON det.indivID=indiv.id WHERE
-                    det.n_status='0'";*/
-            $sql="select * from taxon where id in (select det.taxonID from det inner join indiv on indiv.id = det.indivID where indiv.n_status = 0)";
+            $sql="SELECT * FROM {$this->prefix}_taxon WHERE id IN (SELECT {$this->prefix}_det.taxonID FROM {$this->prefix}_det INNER JOIN {$this->prefix}_indiv on {$this->prefix}_indiv.id = {$this->prefix}_det.indivID WHERE {$this->prefix}_indiv.n_status = 0)";
             $res = $this->fetch($sql,1);
             $return['result'] = $res;
             return $return;
-            //PAGINATION
-            /*if (isset($_GET['pageno'])) {
-               $pageno = $_GET['pageno'];
-            } else {
-               $pageno = 1;
-            } // if
-            $rows_per_page = 100;
-            $lastpage      = ceil(count($res)/$rows_per_page);
-            $pageno = (int)$pageno;
-            if ($pageno > $lastpage) {
-               $pageno = $lastpage;
-            } // if
-            if ($pageno < 1) {
-               $pageno = 1;
-            } // if
-            $limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
-            $sqlLimit = $sql.' '.$limit;
-           // pr($sqlLimit);exit;
-            $resLimit = $this->fetch($sqlLimit,1);
-            if($resLimit){
-                $return['result'] = $resLimit;
-                $return['pageno'] = $pageno;
-                $return['lastpage'] = $lastpage;
-                return $return;
-            }
-            else{return false;}*/
         }
     }
     
@@ -61,8 +32,8 @@ class browseHelper extends Database {
      */
     function showImgTaxon($data){
         $sql = "SELECT * 
-                FROM `det` INNER JOIN `img` ON 
-                    det.taxonID='$data' AND det.indivID=img.indivID GROUP BY img.md5sum LIMIT 0,5";
+                FROM `{$this->prefix}_det` INNER JOIN `{$this->prefix}_img` ON 
+                    {$this->prefix}_det.taxonID='$data' AND {$this->prefix}_det.indivID = {$this->prefix}_img.indivID GROUP BY {$this->prefix}_img.md5sum LIMIT 0,5";
         $res = $this->fetch($sql,1);
         return $res;
     }
@@ -78,64 +49,38 @@ class browseHelper extends Database {
     function dataIndiv($action,$field,$value){
         if($action=='indivTaxon'){
             $sql = "SELECT * 
-                    FROM `det` INNER JOIN `indiv` ON 
-                        det.$field='$value' AND det.indivID=indiv.id AND indiv.n_status='0'
-                    INNER JOIN `person` ON
-                        indiv.personID=person.id
-                    INNER JOIN `locn` ON
-                        locn.id=indiv.locnID
-                    GROUP BY det.indivID";
+                    FROM `{$this->prefix}_det` INNER JOIN `{$this->prefix}_indiv` ON 
+                        {$this->prefix}_det.$field='$value' AND {$this->prefix}_det.indivID = {$this->prefix}_indiv.id AND {$this->prefix}_indiv.n_status='0'
+                    INNER JOIN `{$this->prefix}_person` ON
+                        {$this->prefix}_indiv.personID = {$this->prefix}_person.id
+                    INNER JOIN `{$this->prefix}_locn` ON
+                        {$this->prefix}_locn.id = {$this->prefix}_indiv.locnID
+                    GROUP BY {$this->prefix}_det.indivID";
         }
         
         if($action=='indivLocn'){
-            $sql = "SELECT indiv.id as indivID, indiv.locnID, indiv.plot, indiv.tag, indiv.personID, locn.*, person.*
-                    FROM `indiv` INNER JOIN `locn` ON 
-                        $value=indiv.locnID AND indiv.n_status='0'
-                    INNER JOIN `person` ON
-                        indiv.personID=person.id
-                    GROUP BY indiv.id";
+            $sql = "SELECT {$this->prefix}_indiv.id as indivID, {$this->prefix}_indiv.locnID, {$this->prefix}_indiv.plot, {$this->prefix}_indiv.tag, {$this->prefix}_indiv.personID, {$this->prefix}_locn.*, {$this->prefix}_person.*
+                    FROM `{$this->prefix}_indiv` INNER JOIN `{$this->prefix}_locn` ON 
+                        $value = {$this->prefix}_indiv.locnID AND {$this->prefix}_indiv.n_status='0'
+                    INNER JOIN `{$this->prefix}_person` ON
+                        {$this->prefix}_indiv.personID = {$this->prefix}_person.id
+                    GROUP BY {$this->prefix}_indiv.id";
         }
         
         if($action=='indivPerson'){
-            $sql = "SELECT indiv.id as indivID, indiv.locnID, indiv.plot, indiv.tag, indiv.personID, locn.*, person.*
-                    FROM `indiv` INNER JOIN `locn` ON 
-                        $value=indiv.personID AND indiv.n_status='0'
-                    INNER JOIN `person` ON
-                        $value=person.id
-                    INNER JOIN `det` ON
-                        indiv.id=det.indivID
-                    GROUP BY indiv.id";                   
+            $sql = "SELECT {$this->prefix}_indiv.id as indivID, {$this->prefix}_indiv.locnID, {$this->prefix}_indiv.plot, {$this->prefix}_indiv.tag, {$this->prefix}_indiv.personID, {$this->prefix}_locn.*, {$this->prefix}_person.*
+                    FROM `{$this->prefix}_indiv` INNER JOIN `{$this->prefix}_locn` ON 
+                        $value = {$this->prefix}_indiv.personID AND {$this->prefix}_indiv.n_status = '0'
+                    INNER JOIN `{$this->prefix}_person` ON
+                        $value = {$this->prefix}_person.id
+                    INNER JOIN `{$this->prefix}_det` ON
+                        {$this->prefix}_indiv.id = {$this->prefix}_det.indivID
+                    GROUP BY {$this->prefix}_indiv.id";                   
         }
         
         $res = $this->fetch($sql,1);
         $return['result'] = $res;
         return $return;
-        
-        //PAGINATION
-            /*if (isset($_GET['pageno'])) {
-               $pageno = $_GET['pageno'];
-            } else {
-               $pageno = 1;
-            } // if
-            $rows_per_page = 10;
-            $lastpage      = ceil(count($res)/$rows_per_page);
-            $pageno = (int)$pageno;
-            if ($pageno > $lastpage) {
-               $pageno = $lastpage;
-            } // if
-            if ($pageno < 1) {
-               $pageno = 1;
-            } // if
-            $limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
-            $sqlLimit = $sql.' '.$limit;
-            $resLimit = $this->fetch($sqlLimit,1);
-            if($resLimit){
-                $return['result'] = $resLimit;
-                $return['pageno'] = $pageno;
-                $return['lastpage'] = $lastpage;
-                return $return;
-            }
-            else{return false;}*/
     }
     
     /**
@@ -143,7 +88,7 @@ class browseHelper extends Database {
      */
     function deleteImg($data){
         foreach ($data['id'] as $id){
-            $sql="DELETE FROM `img` WHERE `id`='$id' AND indivID='".$data['indivID']."'";
+            $sql="DELETE FROM `{$this->prefix}_img` WHERE `id`='$id' AND indivID='".$data['indivID']."'";
             $res = $this->query($sql,0);
         }
         return true;
@@ -153,7 +98,7 @@ class browseHelper extends Database {
      * @todo delete all image in one individual
      */
     function deleteImgIndiv($data){
-        $sql="DELETE FROM `img` WHERE indivID='$data'";
+        $sql="DELETE FROM `{$this->prefix}_img` WHERE indivID='$data'";
         $res = $this->query($sql,0);
         return true;
     }
@@ -168,42 +113,15 @@ class browseHelper extends Database {
      */
     function dataLocation($condition,$field,$value){
         if($condition==true){
-            $sql = "SELECT * FROM `locn` WHERE $field='$value'";
+            $sql = "SELECT * FROM `{$this->prefix}_locn` WHERE $field='$value'";
             $res = $this->fetch($sql,1);
             return $res;
         }
         elseif($condition==false){
-            //$sql = "SELECT * FROM `locn`";
-            //$sql="select * from `locn` where id in (select indiv.locnID from indiv where indiv.n_status = 0)";
-            $sql="select * from `locn` where id in (select indiv.locnID from indiv inner join det on indiv.id = det.indivID where indiv.n_status = 0)";
+            $sql="SELECT * FROM `{$this->prefix}_locn` WHERE id IN (SELECT {$this->prefix}_indiv.locnID FROM {$this->prefix}_indiv INNER JOIN {$this->prefix}_det ON {$this->prefix}_indiv.id = {$this->prefix}_det.indivID WHERE {$this->prefix}_indiv.n_status = 0)";
             $res = $this->fetch($sql,1);
             $return['result'] = $res;
             return $return;
-            //PAGINATION
-            /*if (isset($_GET['pageno'])) {
-               $pageno = $_GET['pageno'];
-            } else {
-               $pageno = 1;
-            } // if
-            $rows_per_page = 10;
-            $lastpage      = ceil(count($res)/$rows_per_page);
-            $pageno = (int)$pageno;
-            if ($pageno > $lastpage) {
-               $pageno = $lastpage;
-            } // if
-            if ($pageno < 1) {
-               $pageno = 1;
-            } // if
-            $limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
-            $sqlLimit = $sql.' '.$limit;
-            $resLimit = $this->fetch($sqlLimit,1);
-            if($resLimit){
-                $return['result'] = $resLimit;
-                $return['pageno'] = $pageno;
-                $return['lastpage'] = $lastpage;
-                return $return;
-            }
-            else{return false;}*/
         }
     }
     
@@ -217,41 +135,15 @@ class browseHelper extends Database {
      */
     function dataPerson($condition,$field,$value){
         if($condition==true){
-            $sql = "SELECT * FROM `person` WHERE $field='$value'";
+            $sql = "SELECT * FROM `{$this->prefix}_person` WHERE $field='$value'";
             $res = $this->fetch($sql,1);
             return $res;
         }
         elseif($condition==false){
-            $sql = "SELECT * FROM `person`";           
+            $sql = "SELECT * FROM `{$this->prefix}_person`";           
             $res = $this->fetch($sql,1);
             $return['result'] = $res;
             return $return;
-            
-            //PAGINATION
-            /*if (isset($_GET['pageno'])) {
-               $pageno = $_GET['pageno'];
-            } else {
-               $pageno = 1;
-            } // if
-            $rows_per_page = 10;
-            $lastpage      = ceil(count($res)/$rows_per_page);
-            $pageno = (int)$pageno;
-            if ($pageno > $lastpage) {
-               $pageno = $lastpage;
-            } // if
-            if ($pageno < 1) {
-               $pageno = 1;
-            } // if
-            $limit = 'LIMIT ' .($pageno - 1) * $rows_per_page .',' .$rows_per_page;
-            $sqlLimit = $sql.' '.$limit;
-            $resLimit = $this->fetch($sqlLimit,1);
-            if($resLimit){
-                $return['result'] = $resLimit;
-                $return['pageno'] = $pageno;
-                $return['lastpage'] = $lastpage;
-                return $return;
-            }
-            else{return false;}*/
         }
     }
     
@@ -261,10 +153,10 @@ class browseHelper extends Database {
      */
     function showImgIndiv($data,$limit,$limitVal){
         if($limit==TRUE){
-            $sql = "SELECT * FROM `img` WHERE indivID='$data' AND md5sum IS NOT NULL LIMIT $limitVal";
+            $sql = "SELECT * FROM `{$this->prefix}_img` WHERE indivID='$data' AND md5sum IS NOT NULL LIMIT $limitVal";
         }
         elseif($limit==FALSE){
-            $sql = "SELECT * FROM `img` WHERE indivID='$data'";
+            $sql = "SELECT * FROM `{$this->prefix}_img` WHERE indivID='$data'";
         }
         $res = $this->fetch($sql,1);
         return $res;
@@ -276,10 +168,10 @@ class browseHelper extends Database {
      */
     function detailIndiv($data){
         $sql = "SELECT * 
-                FROM `indiv` INNER JOIN `locn` ON 
-                    indiv.id='$data' AND locn.id=indiv.locnID AND indiv.n_status='0'
-                INNER JOIN `person` ON
-                    person.id=indiv.personID";
+                FROM `{$this->prefix}_indiv` INNER JOIN `{$this->prefix}_locn` ON 
+                    {$this->prefix}_indiv.id='$data' AND {$this->prefix}_locn.id = {$this->prefix}_indiv.locnID AND {$this->prefix}_indiv.n_status = '0'
+                INNER JOIN `{$this->prefix}_person` ON
+                    {$this->prefix}_person.id = {$this->prefix}_indiv.personID";
         $res = $this->fetch($sql,1);
         return $res;
     }
@@ -289,11 +181,11 @@ class browseHelper extends Database {
      * @param $data = id indiv
      */
     function dataDetIndiv($data){
-        $sql = "SELECT det.id as detID, det.*, taxon.*,person.* 
-                FROM `det` INNER JOIN `taxon` ON 
-                    indivID='$data' AND taxon.id=det.taxonID AND det.n_status='0'
-                INNER JOIN `person` ON
-                    person.id=det.personID";
+        $sql = "SELECT {$this->prefix}_det.id as detID, {$this->prefix}_det.notes as detNotes, {$this->prefix}_det.*, {$this->prefix}_taxon.*, {$this->prefix}_person.* 
+                FROM `{$this->prefix}_det` INNER JOIN `{$this->prefix}_taxon` ON 
+                    indivID = '$data' AND {$this->prefix}_taxon.id = {$this->prefix}_det.taxonID AND {$this->prefix}_det.n_status = '0'
+                INNER JOIN `{$this->prefix}_person` ON
+                    {$this->prefix}_person.id = {$this->prefix}_det.personID";
         $res = $this->fetch($sql,1);
         return $res;
     }
@@ -303,9 +195,9 @@ class browseHelper extends Database {
      * @param $data = id indiv
      */
     function dataObsIndiv($data){
-        $sql = "SELECT obs.id as obsID, obs.*, person.* 
-                FROM `obs` INNER JOIN `person` ON 
-                    indivID='$data' AND person.id=obs.personID AND obs.n_status='0'";
+        $sql = "SELECT {$this->prefix}_obs.id as obsID, {$this->prefix}_obs.*, {$this->prefix}_person.* 
+                FROM `{$this->prefix}_obs` INNER JOIN `{$this->prefix}_person` ON 
+                    indivID = '$data' AND {$this->prefix}_person.id = {$this->prefix}_obs.personID AND {$this->prefix}_obs.n_status = '0'";
         $res = $this->fetch($sql,1);
         return $res;
     }
@@ -316,7 +208,7 @@ class browseHelper extends Database {
      * @param $id = id indiv
      */
     function updateIndiv($data,$id){
-        $sql = "UPDATE `indiv` SET `locnID` = '".$data['locnID']."', `plot` = '".$data['plot']."', `tag` = '".$data['tag']."' WHERE `id` = $id;";
+        $sql = "UPDATE `{$this->prefix}_indiv` SET `locnID` = '".$data['locnID']."', `plot` = '".$data['plot']."', `tag` = '".$data['tag']."' WHERE `id` = $id;";
         $res = $this->query($sql,0);
         if($res){return true;}
     }
@@ -327,19 +219,19 @@ class browseHelper extends Database {
      */
     function deleteIndiv($condition,$table,$field,$data){
         if($condition ==''){ 
-            $sql = "UPDATE `$table` SET `n_status` = '1' WHERE `$field`='".$data['indivID']."';";
+            $sql = "UPDATE `{$this->prefix}_$table` SET `n_status` = '1' WHERE `$field`='".$data['indivID']."';";
             $res = $this->query($sql,0);
         }
         elseif($condition == 'AND'){
-            $sql = "UPDATE `$table` SET `n_status` = '1' WHERE `$field`='".$data['indivID']."' AND `id` = '".$data['id']."';";
+            $sql = "UPDATE `{$this->prefix}_$table` SET `n_status` = '1' WHERE `$field`='".$data['indivID']."' AND `id` = '".$data['id']."';";
             $res = $this->query($sql,0);
         }
         if($res){
-            logFile('====Update table '.$table.' id='.$data['indivID'].'n_status = 1====');
+            logFile('====Update table '.$this->prefix.'_'.$table.' id='.$data['indivID'].'n_status = 1====');
             return true;    
         }
         else{
-            logFile('====Failed table '.$table.' id='.$data['indivID'].'n_status = 1====');
+            logFile('====Failed table '.$this->prefix.'_'.$table.' id='.$data['indivID'].'n_status = 1====');
             return false;}
     }
     
@@ -351,17 +243,17 @@ class browseHelper extends Database {
      * 
      */
     function search($table,$data){
-        if($table=='taxon'){
+        if($table == $this->prefix.'_taxon'){
             $sql = "SELECT * 
-                    FROM `$table` INNER JOIN `det` ON 
-                    $table.id=det.taxonID AND det.n_status='0' WHERE
+                    FROM `$table` INNER JOIN `{$this->prefix}_det` ON 
+                    $table.id = {$this->prefix}_det.taxonID AND {$this->prefix}_det.n_status='0' WHERE
                     $table.fam LIKE '%$data%' OR $table.gen LIKE '%$data%' OR $table.sp LIKE '%$data%' OR $table.morphotype LIKE '%$data%'";
             //pr($sql);exit;
         }
-        elseif($table=='locn'){
+        elseif($table == $this->prefix.'_locn'){
             $sql = "SELECT * FROM `$table` WHERE `longitude` LIKE '%$data%' OR `latitude` LIKE '%$data%' OR `elev` LIKE '%$data%' OR `geomorph` LIKE '%$data%' OR `locality` LIKE '%$data%' OR `county` LIKE '%$data%' OR `province` LIKE '%$data%' OR `island` LIKE '%$data%' OR `country` LIKE '%$data%'";
         }
-        elseif($table=='person'){
+        elseif($table == $this->prefix.'_person'){
             $sql = "SELECT * FROM `$table` WHERE `name` LIKE '%$data%' OR `email` LIKE '%$data%' OR `twitter` LIKE '%$data%' OR `website` LIKE '%$data%' OR `phone` LIKE '%$data%' OR `institutions` LIKE '%$data%' OR `project` LIKE '%$data%'";
         }
         $res = $this->fetch($sql,1);

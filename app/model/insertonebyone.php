@@ -1,6 +1,8 @@
 <?php
 
 class insertonebyone extends Database {
+
+    var $prefix = "peerkalbar";
     
     function __construct()
 	{
@@ -47,7 +49,7 @@ class insertonebyone extends Database {
 		$field = implode (',',$tmpfield);
 		$value = implode (',',$tmpvalue);
 		
-		$sql = "INSERT INTO {$table} ({$field}) VALUES ({$value})";
+		$sql = "INSERT INTO {$this->prefix}_{$table} ({$field}) VALUES ({$value})";
         
         if($db2){
             $res = $this->query($sql,1);
@@ -152,7 +154,7 @@ class insertonebyone extends Database {
                 
                 //insert to table florakb_person
                 $dataPass = array('id' => $insert['lastid'], 'password' => $password, 'username' => $username, 'salt' => $salt, 'register_date' => $register_date, 'email_token' => $token);
-                $insert_dataPas = $this->insertData('florakb_person',$dataPass,true);
+                $insert_dataPas = $this->insertData('person_extra',$dataPass,true);
                 
                 if ($insert_dataPas['status'] == 0){
         			$this->rollback();
@@ -240,7 +242,7 @@ class insertonebyone extends Database {
      * @return return sql result or return false
      * */
     function data_exist($table,$whereField,$value){
-        $sql = "SELECT * FROM {$table} WHERE {$whereField} = '{$value}'";
+        $sql = "SELECT * FROM {$this->prefix}_{$table} WHERE {$whereField} = '{$value}'";
 		$res = $this->fetch($sql,0);
         if($res) return $res;
         return false;
@@ -257,7 +259,7 @@ class insertonebyone extends Database {
      * */
     function select_plantlist($fam,$gen,$sp){
         $sql = "SELECT * FROM plantlist WHERE family = '{$fam}' AND genus = '{$gen}' AND species = '{$sp}'";
-		$res = $this->fetch($sql,0);
+		$res = $this->fetch($sql,0,2);
         if($res) return $res;
         return false;
     }
@@ -289,7 +291,7 @@ class insertonebyone extends Database {
      * 
      * */
     function list_locn(){
-        $sql = "SELECT id, locality FROM locn GROUP BY locality ORDER BY locality";
+        $sql = "SELECT id, locality FROM {$this->prefix}_locn GROUP BY locality ORDER BY locality";
 		$res = $this->fetch($sql,1);
         return $res;
     }
@@ -301,7 +303,7 @@ class insertonebyone extends Database {
      * 
      * */
     function list_person(){
-        $sql = "SELECT * FROM person";
+        $sql = "SELECT * FROM {$this->prefix}_person";
 		$res = $this->fetch($sql,1);
         return $res;
     }
@@ -313,7 +315,7 @@ class insertonebyone extends Database {
      * 
      * */
     function list_taxon(){
-        $sql = "SELECT * FROM taxon GROUP BY fam, gen, sp, morphotype ORDER BY fam, gen, sp, morphotype";
+        $sql = "SELECT * FROM {$this->prefix}_taxon GROUP BY fam, gen, sp, morphotype ORDER BY fam, gen, sp, morphotype";
 		$res = $this->fetch($sql,1);
         return $res;
     }
@@ -328,18 +330,18 @@ class insertonebyone extends Database {
         if($field=='family'){
             $like = $data['family'];
             $sql = "SELECT kewid, {$field} FROM plantlist WHERE {$field} LIKE '%$like%' AND genus='' AND species='' GROUP BY {$field} ORDER BY {$field};";
-    		$res = $this->fetch($sql,1);
+    		$res = $this->fetch($sql,1,2);
         }elseif($field=='genus'){
             $family = $data['family'];
             $like = $data['genus'];
             $sql = "SELECT kewid, {$field} FROM plantlist WHERE family='{$family}' AND {$field} LIKE '%$like%' AND species='' GROUP BY {$field} ORDER BY {$field};";
-    		$res = $this->fetch($sql,1);
+    		$res = $this->fetch($sql,1,2);
         }elseif($field=='species'){
             $family = $data['family'];
             $genus = $data['genus'];
             $like = $data['species'];
             $sql = "SELECT kewid, {$field} FROM plantlist WHERE family='{$family}' AND genus='{$genus}' AND {$field} LIKE '%$like%' GROUP BY {$field} ORDER BY {$field};";
-    		$res = $this->fetch($sql,1);
+    		$res = $this->fetch($sql,1,2);
         }else{
             $res = false;
         }
@@ -355,7 +357,7 @@ class insertonebyone extends Database {
      * 
      * */
     function get_enum($table, $field){
-        $sql = "SHOW COLUMNS FROM `$table` WHERE Field = '$field'";
+        $sql = "SHOW COLUMNS FROM `{$this->prefix}_{$table}` WHERE Field = '$field'";
 		$res = $this->fetch($sql,0);
         
         preg_match('/^enum\((.*)\)$/', $res['Type'], $matches);

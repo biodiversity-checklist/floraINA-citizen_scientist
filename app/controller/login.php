@@ -83,7 +83,9 @@ class login extends Controller {
 
         
             $signup = $this->loginHelper->createUser($data);
-            if ($signup){
+            
+            // uncomment in server
+            // if ($signup){
 
                 $getToken = $this->loginHelper->getEmailToken($data['username']);
 
@@ -114,7 +116,7 @@ class login extends Controller {
 
                 $this->activityHelper->updateEmailLog(false,$to,'account',0);
 
-            }
+            // }
 
             echo json_encode(array('status' => true));
             exit;

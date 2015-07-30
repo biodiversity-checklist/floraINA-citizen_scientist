@@ -29,7 +29,7 @@
                 <div class="col-md-4">
                     <h3>Ringkasan</h3>
                     
-                    <p class="label_detail" style="margin: 0 0 0;">Pencipta</p>
+                    <p class="label_detail" style="margin: 0 0 0;">Pendata</p>
                     <p>{$dataIndiv.name}</p>
                     
                     <p class="label_detail" style="margin: 0 0 0;">Plot</p>
@@ -87,7 +87,7 @@
             <table id="table-obs" class="table table-striped table-bordered flora-table table-curved" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th>Pencipta</th>
+                        <th>Pendata</th>
                         <th>Tanggal</th>
                         <th>Microhab</th>
                         <th>Habit</th>
@@ -143,7 +143,7 @@
             <table id="table-det" class="table table-striped table-bordered flora-table table-curved" cellspacing="0" width="100%">
                 <thead>
                     <tr>
-                        <th>Pencipta</th>
+                        <th>Pendata</th>
                         <th>Tanggal</th>
                         <th>Taxon</th>
                         <th>Konfidensi</th>
@@ -171,7 +171,7 @@
                         </td>
                         <td>{$dataDet.confid}</td>
                         <td>{$dataDet.using}</td>
-                        <td>{$dataDet.notes}</td>
+                        <td>{$dataDet.detNotes}</td>
                     </tr>
                 {foreachelse}<i>Tidak ada data determinasi</i>
                 {/foreach}
@@ -296,9 +296,9 @@
     <div class="slides"></div>
     <!-- Controls for the borderless lightbox -->
     <h3 class="title"></h3>
-    <a class="prev">‹</a>
-    <a class="next">›</a>
-    <a class="close">×</a>
+    <a class="prev"><i class="glyphicon glyphicon-chevron-left" style="font-size: 20px; top: -5px;"></i></a>
+    <a class="next"><i class="glyphicon glyphicon-chevron-right" style="font-size: 20px; top: -5px;"></i></a>
+    <a class="close"><i class="glyphicon glyphicon-remove"></i></a>
     <a class="play-pause"></a>
     <ol class="indicator"></ol>
     <!-- The modal dialog, which will be used to wrap the lightbox content -->

@@ -3,6 +3,7 @@
 class imagezip extends Database {
 
 	var $configkey = "default";
+    var $prefix = "peerkalbar";
 	
     /**
      * @todo insert image data to database
@@ -17,7 +18,7 @@ class imagezip extends Database {
      * 
      * */
 	function updateImagePerson($personID, $data){
-        $sql = "UPDATE img SET md5sum = '$data[md5sum]', directory = '$data[directory]', mimetype = '$data[mimetype]' WHERE filename = '$data[filename]' AND personID = '$personID'";
+        $sql = "UPDATE {$this->prefix}_img SET md5sum = '$data[md5sum]', directory = '$data[directory]', mimetype = '$data[mimetype]' WHERE filename = '$data[filename]' AND personID = '$personID'";
 		$res = $this->query($sql,0);
         return $res;
 	}
@@ -35,7 +36,7 @@ class imagezip extends Database {
      * 
      * */
 	function updateImage($personID, $data){
-        $sql = "UPDATE img SET md5sum = '$data[md5sum]', directory = '$data[directory]', mimetype = '$data[mimetype]' WHERE filename = '$data[filename]'";
+        $sql = "UPDATE {$this->prefix}_img SET md5sum = '$data[md5sum]', directory = '$data[directory]', mimetype = '$data[mimetype]' WHERE filename = '$data[filename]'";
 		$res = $this->query($sql,0);
         return $res;
 	}
@@ -48,7 +49,7 @@ class imagezip extends Database {
      * 
      * */
     function validateUser($username){
-        $sql = "SELECT id FROM person WHERE short_namecode= '$username'";
+        $sql = "SELECT id FROM {$this->prefix}_person WHERE short_namecode= '$username'";
 		$res = $this->fetch($sql,0);
         return $res;
     }
@@ -61,7 +62,7 @@ class imagezip extends Database {
      * 
      * */
     function validateEmail($email){
-        $sql = "SELECT * FROM person WHERE email= '$email'";
+        $sql = "SELECT * FROM {$this->prefix}_person WHERE email= '$email'";
 		$res = $this->fetch($sql,0);
         return $res;
     }
@@ -75,7 +76,7 @@ class imagezip extends Database {
      * 
      * */
     function dataExist($personID, $filename){
-        $sql = "SELECT id FROM img WHERE filename = '$filename' AND personID = '$personID'";
+        $sql = "SELECT id FROM {$this->prefix}_img WHERE filename = '$filename' AND personID = '$personID'";
 		$res = $this->fetch($sql,0);
         if($res) return true;
         return false;
@@ -91,9 +92,24 @@ class imagezip extends Database {
      * 
      * */
     function imageExist($filename){
-        $sql = "SELECT id FROM img WHERE filename = '$filename'";
+        $sql = "SELECT id FROM {$this->prefix}_img WHERE filename = '$filename'";
 		$res = $this->fetch($sql,0);
         if($res) return true;
+        return false;
+        
+    }
+    
+    /**
+     * get detail image by name
+     * 
+     * @param $name = original name of image
+     * @return query result
+     * 
+     * */
+    function get_image_by_name($filename){
+        $sql = "SELECT * FROM {$this->prefix}_img WHERE filename = '$filename'";
+		$res = $this->fetch($sql,0);
+        if($res) return $res;
         return false;
         
     }

@@ -54,7 +54,7 @@ class upload extends Controller {
 		$username = $this->user['login']['username'];
 		
 		logFile(serialize($_FILES));
-
+		// pr($_FILES);exit;
 		if ($_FILES){
 			
 			$numberOfSheet = 4;
@@ -103,9 +103,9 @@ class upload extends Controller {
 					
 				}
 				
-				// pr($newData);exit;
 				/* here begin process */
 				if ($newData){
+					
 					
 					$emptyTmptable = $this->collectionHelper->truncateData(false,true);
 					
@@ -113,18 +113,15 @@ class upload extends Controller {
 						
 						logFile('empty tmp table before insert');
 
-						// sleep(1);
 						$referenceQuery = $this->collectionHelper->tmp_data($newData);
 
 						logFile('store data from xls to tmp table');
 
 						if ($referenceQuery){
 
-							// pr($newData);exit;
 					
 							// logFile('Preparing database ', $username);
 							$insertData = false;
-							// $referenceQuery = true;
 							if ($referenceQuery){
 								
 								$this->collectionHelper->startTransaction();
@@ -145,10 +142,7 @@ class upload extends Controller {
 								
 								$getMaster = $this->collectionHelper->getMasterData();
 								// insert indiv
-								// pr($getMaster);
 								$indivQuery = $this->excelHelper->parseMasterData($getMaster,true);
-								// pr($indivQuery);
-								// exit;
 								$insertIndiv = $this->collectionHelper->storeIndivData($indivQuery);
 								
 								// insert det,obs,coll
@@ -161,7 +155,6 @@ class upload extends Controller {
 								// update tmp photo
 								$updateTmpPhoto = $this->collectionHelper->updateTmpPhoto();
 
-								// exit;
 								// insert collector
 								$getMaster = $this->collectionHelper->getMasterData();
 								$collectorQuery = $this->excelHelper->parseMasterData($getMaster,true,5,'collector');
@@ -173,11 +166,12 @@ class upload extends Controller {
 
 								$imgQuery = $this->excelHelper->parseMasterData($getMaster,true,4,'img');
 								
-								// pr($imgQuery);
-								// exit;
 								$insertImage = $this->collectionHelper->storeSingleData($imgQuery,'img');
-								// pr($imgQuery);
 								if ($insertImage){
+
+									$log_upload = $this->collectionHelper->insert_log_upload($_FILES[$formName]['name']);
+						
+									logFile('log xls file');
 
 									$this->collectionHelper->commitTransaction();
 
@@ -194,7 +188,6 @@ class upload extends Controller {
 							}
 							
 
-							// exit;
 							/*
 							[Old script]
 							
@@ -219,12 +212,12 @@ class upload extends Controller {
 								logFile('Insert xls success');
 								$this->log('upload','success upload xls');
 								print json_encode(array('status'=>true, 'finish'=>true, 'msg'=>'Insert success  ('. execTime($startTime,$endTime).')'));
-								// echo 'Insert success  ('. execTime($startTime,$endTime).')';	
 								
 								// send mail to user
 								
 
-								$sendMail = $this->sendMail();
+								// $sendMail = $this->sendMail();
+								
 								// if ($sendMail){
 								// 	logFile('Send mail success');
 								// 	print json_encode(array('status'=>true, 'finish'=>true, 'msg'=>'Insert success  ('. execTime($startTime,$endTime).')'));
@@ -385,7 +378,7 @@ class upload extends Controller {
 
 	function truncate()
 	{
-		$this->collectionHelper->truncateData(false,true);
+		$this->collectionHelper->truncateData($main=0,$extra=0);
 	}
 	
 	function logUploadUser($file)

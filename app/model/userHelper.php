@@ -1,6 +1,8 @@
 <?php
 class userHelper extends Database {
 	
+    var $prefix = "peerkalbar";
+    
     function __construct()
     {
         $session = new Session;
@@ -36,14 +38,14 @@ class userHelper extends Database {
         $ses_user = $session->get_session();
         $user = $ses_user;                
              
-        $sql = "UPDATE `person` SET `name` = '".$data['name']."', `email` = '".$data['email']."', `project` = '".$data['project']."', `institutions` = '".$data['institutions']."', `twitter` = $dataTwitter, `website` = $dataWeb, `phone` = $dataPhone WHERE `id` = '".$user['login']['id']."' ";
+        $sql = "UPDATE `{$this->prefix}_person` SET `name` = '".$data['name']."', `email` = '".$data['email']."', `project` = '".$data['project']."', `institutions` = '".$data['institutions']."', `twitter` = $dataTwitter, `website` = $dataWeb, `phone` = $dataPhone WHERE `id` = '".$user['login']['id']."' ";
         $res = $this->query($sql,0);
         //$sql2 = "UPDATE `florakb_person` SET `username` = '".$data['username']."' WHERE `id` = '".$user['login']['id']."' ";
         //$res2 = $this->query($sql2,1);
         //if($res && $res2){return true;}
         if($res){return true;}
     }
-    
+
     /**
      * @todo edit user password
      */
@@ -51,8 +53,8 @@ class userHelper extends Database {
         if($data==false) return false;
         
         global $CONFIG;
-		$salt = $CONFIG['default']['salt'];
-		$password = sha1($data['newPassword'].$salt);
+        $salt = $CONFIG['default']['salt'];
+        $password = sha1($data['newPassword'].$salt);
         
         if ($data['userid']){
             $id = $data['userid'];
@@ -64,7 +66,7 @@ class userHelper extends Database {
         }
         
         
-        $sql = "UPDATE `florakb_person` SET `password` = '".$password."', `salt` = '".$salt."' WHERE `id` = '{$id}' ";
+        $sql = "UPDATE `{$this->prefix}_person_extra` SET `password` = '".$password."', `salt` = '".$salt."' WHERE `id` = '{$id}' ";
         $res = $this->query($sql,1);
         if($res){return true;}
     }
@@ -77,7 +79,7 @@ class userHelper extends Database {
      */
     function getUserData($field,$data){
         if($data==false) return false;
-        $sql = "SELECT * FROM `person` WHERE `$field` = '".$data."' ";
+        $sql = "SELECT * FROM `{$this->prefix}_person` WHERE `$field` = '".$data."' ";
         $res = $this->fetch($sql,0);  
         if(empty($res)){return false;}
         return $res; 
@@ -94,7 +96,7 @@ class userHelper extends Database {
         $filter = "";
         if ($n_status) $filter = " AND n_status = {$n_status}";
 
-        $sql = "SELECT * FROM `florakb_person` WHERE `$field` = '".$data."' {$filter}";
+        $sql = "SELECT * FROM `{$this->prefix}_person_extra` WHERE `$field` = '".$data."' {$filter}";
         $res = $this->fetch($sql,0,1);  
         if(empty($res)){return false;}
         return $res; 

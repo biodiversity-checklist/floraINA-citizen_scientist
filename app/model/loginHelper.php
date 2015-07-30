@@ -1,34 +1,23 @@
 <?php
 
 class loginHelper extends Database {
-	var $salt;
+	
+    var $salt;
+    var $prefix = "peerkalbar";
+
     function __construct()
     {
         global $basedomain;
         $this->loadmodule();
         $this->salt = '12345678PnD';
-
     }
     
     function loadmodule()
     {
         // include APP_MODELS.'activityHelper.php';
         // $this->activityHelper = new helper_model;
-        
+       
     }
-
-	function local($data=false)
-	{
-		if($data== false) return false;
-		
-		$salt = '12345678PnD';
-		$password = sha1($data['password'].$salt);
-		$sql = "SELECT * FROM login where username = '{$data['username']}' AND password = '{$password}' LIMIT 1";
-		$res = $this->fetch($sql, 0);
-		// pr($sql);
-		if ($res) return $res;
-		return false;
-	}
 	
     /**
      * @todo insert data user into person and florakb_person
@@ -67,15 +56,15 @@ class loginHelper extends Database {
             $dataPhone = "'".$data['phone']."'";
         }
         
-		$sql = "INSERT INTO person (name, email, twitter, website, phone) VALUES ('{$data['name']}','{$data['email']}',$dataTwitter,$dataWeb,$dataPhone)";
+		$sql = "INSERT INTO {$this->prefix}_person (name, email, twitter, website, phone) VALUES ('{$data['name']}','{$data['email']}',$dataTwitter,$dataWeb,$dataPhone)";
 		$res = $this->query($sql,0);
         
-        $getID = "SELECT id from person WHERE email= '".$data['email']."' ";
+        $getID = "SELECT id from {$this->prefix}_person WHERE email= '".$data['email']."' ";
 		$resID = $this->fetch($getID,0);
 
         $email_token = sha1(CODEKIR.date('ymdhis'));
         $register_date = date('Y-m-d H:i:s');
-        $sql2 = "INSERT INTO florakb_person (id, password, username, salt,register_date,email_token) VALUES ('{$resID['id']}','{$password}','{$data['username']}','{$salt}','{$register_date}','{$email_token}')";
+        $sql2 = "INSERT INTO {$this->prefix}_person_extra (id, password, username, salt,register_date,email_token) VALUES ('{$resID['id']}','{$password}','{$data['username']}','{$salt}','{$register_date}','{$email_token}')";
 		$res2 = $this->query($sql2,1);
 		
         if ($res && $res2){
@@ -109,7 +98,7 @@ class loginHelper extends Database {
     function checkName($data=false)
     {
         if($data==false) return false;
-        $sql = "SELECT COUNT(`id`) AS total FROM `person` WHERE `name` = '".$data."' ";
+        $sql = "SELECT COUNT(`id`) AS total FROM `{$this->prefix}_person` WHERE `name` = '".$data."' ";
         $res = $this->fetch($sql,0);
         
         if ($res['total'] > 0){
@@ -128,7 +117,7 @@ class loginHelper extends Database {
     function checkEmail($data=false)
     {
         if($data==false) return false;
-        $sql = "SELECT COUNT(`id`) AS total FROM `person` WHERE `email` = '".$data."' ";
+        $sql = "SELECT COUNT(`id`) AS total FROM `{$this->prefix}_person` WHERE `email` = '".$data."' ";
         $res = $this->fetch($sql,0);
         
         if ($res['total'] > 0){
@@ -147,7 +136,7 @@ class loginHelper extends Database {
     function checkUsername($data=false)
     {
         if($data==false) return false;
-        $sql = "SELECT COUNT(`id`) AS total FROM `florakb_person` WHERE `username` = '".$data."' ";
+        $sql = "SELECT COUNT(`id`) AS total FROM `{$this->prefix}_person_extra` WHERE `username` = '".$data."' ";
         $res = $this->fetch($sql,0,1);
         
         if ($res['total'] > 0){
@@ -167,7 +156,7 @@ class loginHelper extends Database {
     {
         if($data==''){return true;}
         else{
-            $sql = "SELECT COUNT(`id`) AS total FROM `person` WHERE `twitter` = '".$data."' ";
+            $sql = "SELECT COUNT(`id`) AS total FROM `{$this->prefix}_person` WHERE `twitter` = '".$data."' ";
             $res = $this->fetch($sql,0);
             
             if ($res['total'] > 0){
@@ -186,14 +175,13 @@ class loginHelper extends Database {
      */
     function checkPassword($data=false,$dataPassword){
         //select salt from ID
-        $sql = "SELECT salt,password FROM `florakb_person` WHERE `id` = '".$data['id']."' ";
+        $sql = "SELECT salt,password FROM `{$this->prefix}_person_extra` WHERE `id` = '".$data['id']."' ";
         $res = $this->fetch($sql,1,1);
         
         //match email and password
         $salt = $res[0]['salt']; 
         $passwordDB = sha1($dataPassword."$salt");
         $password = $res[0]['password'];
-        logFile('passdb = '. $passwordDB . ' pass= ' . $password);
         if($passwordDB==$password){return TRUE;}
         return FALSE;
     }
@@ -243,7 +231,7 @@ class loginHelper extends Database {
         if($all) $filter = " * ";
         else $filter = " email_token ";
 
-        $sql = "SELECT {$filter} FROM `florakb_person` WHERE `username` = '".$username."' LIMIT 1";
+        $sql = "SELECT {$filter} FROM `{$this->prefix}_person_extra` WHERE `username` = '".$username."' LIMIT 1";
         // logFile($sql);
         $res = $this->fetch($sql,0,1);
         if ($res) return $res;
@@ -260,12 +248,12 @@ class loginHelper extends Database {
         if($all) $filter = " * ";
         else $filter = " email ";
 
-        $sql = "SELECT {$filter} FROM `person` WHERE `email` = '".$email."' LIMIT 1";
+        $sql = "SELECT {$filter} FROM `{$this->prefix}_person` WHERE `email` = '".$email."' LIMIT 1";
         // logFile($sql);
         $res = $this->fetch($sql,0);
         if ($res){
             
-            $sql = "SELECT username, email_token FROM `florakb_person` WHERE `id` = '".$res['id']."' LIMIT 1";
+            $sql = "SELECT username, email_token FROM `{$this->prefix}_person_extra` WHERE `id` = '".$res['id']."' LIMIT 1";
             // pr($res);
             $result = $this->fetch($sql,0,1);
 
@@ -282,7 +270,7 @@ class loginHelper extends Database {
     {
         if (!$username) return false;
         $date = date('Y-m-d H:i:s');
-        $sql = "UPDATE florakb_person SET n_status = 1, verified_date = '{$date}' WHERE username = '{$username}' AND n_status = 0 LIMIT 1";
+        $sql = "UPDATE {$this->prefix}_person_extra SET n_status = 1, verified_date = '{$date}' WHERE username = '{$username}' AND n_status = 0 LIMIT 1";
         $res = $this->query($sql,1);
         if($res) return true;
         return false;
@@ -296,11 +284,11 @@ class loginHelper extends Database {
         $username = $data['username'];
         $password = sha1($data['password'].$this->salt);
 
-        $getID = "SELECT id FROM person WHERE email = '{$email}' LIMIT 1";
+        $getID = "SELECT id FROM {$this->prefix}_person WHERE email = '{$email}' LIMIT 1";
         // pr($getID);
         $resID = $this->fetch($getID);
         if ($resID){
-            $sql = "UPDATE florakb_person SET username = '{$username}', password = '{$password}', n_status = 1, 
+            $sql = "UPDATE {$this->prefix}_person_extra SET username = '{$username}', password = '{$password}', n_status = 1, 
                     verified_date = '{$date}' WHERE id = '{$resID['id']}' AND n_status = 0 LIMIT 1";
             // pr($sql);
             $res = $this->query($sql,1);
@@ -323,12 +311,12 @@ class loginHelper extends Database {
         if (!$username) return false;
 
         
-        $sql = "SELECT * FROM `person` WHERE email = '".$email."' ";
+        $sql = "SELECT * FROM `{$this->prefix}_person` WHERE email = '".$email."' ";
         $res = $this->fetch($sql,0);  
         if ($res){
 
             $date = date('Y-m-d H:i:s');
-            $q = "UPDATE florakb_person SET n_status = 2 WHERE id = '{$res['id']}' LIMIT 1";
+            $q = "UPDATE {$this->prefix}_person_extra SET n_status = 2 WHERE id = '{$res['id']}' LIMIT 1";
             $r= $this->query($q,1);
             if($r) return true;
             return false;

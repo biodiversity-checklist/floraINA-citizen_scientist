@@ -4,7 +4,6 @@ class browse extends Controller {
 	
 	var $models = FALSE;
 	var $view;
-
 	
 	function __construct()
 	{

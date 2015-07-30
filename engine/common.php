@@ -259,6 +259,19 @@ function createFolder($path_array, $permissions){
 }
 
 /**
+ * @todo create folder bash
+ * @param array $path_array = array contain folder that will be created array($path_1, $path_2)
+ * @param int $permission = value of permission access to folder
+ * */
+function shell_createFolder($path_array){
+    foreach ($path_array as $dir) {
+        if (!is_dir($dir)){
+            shell_exec("mkdir $dir");
+        }
+    }
+}
+
+/**
  * @todo calculate excecution time
  * @param int $timeStart = start time in microtime
  * @param int $timeEnd = end time in microtime
@@ -375,7 +388,8 @@ function sftpServices($host="localhost", $user=false, $pass=false, $filename=fal
 
 	$sftp = ssh2_sftp($connection);
 
-	
+	logFile('pathfile'.$pathFile);
+	logFile('filename'.$CONFIG['default']['upload_path'].$filename);
 	if (ssh2_scp_recv($connection, $pathFile, $CONFIG['default']['upload_path'].$filename)){
 
 		logFile('sftp move file to tmp');

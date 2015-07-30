@@ -101,7 +101,12 @@ class Database
 		}
 	}
 	
-        
+    function escape_string($data, $dbuse=0)
+	{
+		$link = $this->open_connection($dbuse);
+
+		return mysql_real_escape_string($data, $link);
+	}    
 	/*
 		fungsi query digunakan untuk menjalankan query seperti insert, 
 		update atau query yang tidak diperlukan nilai kembalian dalam bentuk data

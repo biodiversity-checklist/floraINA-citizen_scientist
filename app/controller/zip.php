@@ -146,13 +146,21 @@ class zip extends Controller {
                 $path_data = 'public_assets/';
                 //$path_user = $path_data.$username;
                 $path_img = $path_data.'/img';
+                $path_img_ori = $path_img.'/ori';
                 $path_img_1000px = $path_img.'/1000px';
                 $path_img_500px = $path_img.'/500px';
                 $path_img_100px = $path_img.'/100px';
                 
-                $toCreate = array($path_img, $path_img_1000px, $path_img_500px, $path_img_100px);
+                $toCreate = array($path_img, $path_img_ori, $path_img_1000px, $path_img_500px, $path_img_100px);
                 $permissions = 0755;
-                createFolder($toCreate, $permissions);
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+                {
+                    createFolder($toCreate, $permissions);
+                }
+                else
+                {
+                    shell_createFolder($toCreate);
+                }
                 
                 $images = $this->GetContents($path_extract);
                 $list = count($images);
@@ -192,6 +200,24 @@ class zip extends Controller {
                                 $fileToInsert = array('filename' => $entry,'md5sum' => $image_name_encrypt, 'directory' => $folder, 'mimetype' => $fileinfo['mime']);
                                 
                                 if($dataExist){
+                                    
+                                    //get detail image
+                                    $detail_image = $this->imagezip->get_image_by_name($entry);
+                                    
+                                    if($detail_image['md5sum'])
+                                    {
+                                        $delete_image = array(
+                                            $path_img_ori.'/'.$detail_image['md5sum'].'.ori.jpg',
+                                            $path_img_1000px.'/'.$detail_image['md5sum'].'.1000px.jpg',
+                                            $path_img_500px.'/'.$detail_image['md5sum'].'.500px.jpg',
+                                            $path_img_100px.'/'.$detail_image['md5sum'].'.100px.jpg'
+                                        );
+                                        
+                                        //delete old image
+                                        $this->delete_img($delete_image);
+                                    }
+                                    
+                                    copy($path_entry."/".$entry, $path_img_ori.'/'.$image_name_encrypt.'.ori.jpg');
                                     copy($path_entry."/".$entry, $path_img_1000px.'/'.$image_name_encrypt.'.1000px.jpg');
                                     if(!@ copy($path_entry."/".$entry, $path_img_1000px.'/'.$image_name_encrypt.'.1000px.jpg')){
                                         $status = "error";
@@ -261,7 +287,7 @@ class zip extends Controller {
                 
                 $count_dataNotExist = count($dataNotExist);
                 
-                if($list = $dataNotExist){
+                if($list == $count_dataNotExist){
                     $status = 'warning';
                     $msg = 'File berhasil diekstrak. Tidak ada gambar yang sesuai dengan data.';
                     $data['dataNotExist'] = $dataNotExist;
@@ -269,7 +295,7 @@ class zip extends Controller {
                     //send dataNotExist information to user   
 
                     $status = 'success';
-                    $msg = 'File berhasil diekstrak';
+                    $msg = 'File berhasil diekstrak.';
                     $data['dataNotExist'] = $dataNotExist;
                 }
                 
@@ -278,6 +304,217 @@ class zip extends Controller {
                 $status = "error";
                 $msg = 'Nama file harus file zip';
             }
+        }else{
+            $status = "error";
+            $msg = 'Nama file tidak boleh kosong';
+        }
+        
+        echo json_encode(array('status' => $status, 'message' => $msg, 'data' => $data));
+        exit;
+    }
+    
+    /**
+     * @todo fetch folder function basedomain/zip/extract
+     * 
+     * @see createFolder Function
+     * @see getContents Function
+     * @see resize & crop Function
+     * @see validateUsername Function
+     * @see imagezip class
+     * 
+     * */
+    function fetch_folder($status=NULL,$msg=NULL,$data=NULL){
+        global $CONFIG;
+        
+        $name = $_POST['imagezip'];
+        $path = '';
+        $path_folder = $CONFIG['default']['root_data'];
+        
+        //get data user from session
+        $session = new Session;
+        $sess_data = $session->get_session();
+        
+        $username = $sess_data['login']['username'];
+        $personID = $sess_data['login']['id'];
+        $password = $sess_data['login']['password'];
+        
+        if (empty($username) || empty($personID) || empty($password)){
+            $status = "error";
+            $msg = "Kesalahan terjadi saat validasi data pengguna, silakan logout kemudian login kembali";
+            
+            echo json_encode(array('status' => $status, 'message' => $msg));
+            exit;
+        }
+        
+        if(!empty($name)){
+            
+            $file = $path_folder.$name;
+            
+            //check file zip exist
+            if(!is_dir($file)){
+                $status = "error";
+                $msg = "Sistem tidak dapat menemukan folder yang ditentukan";
+                
+                echo json_encode(array('status' => $status, 'message' => $msg));
+                exit;
+            }
+            
+            $path_data = 'public_assets/';
+            //$path_user = $path_data.$username;
+            $path_img = $path_data.'/img';
+            $path_img_ori = $path_img.'/ori';
+            $path_img_1000px = $path_img.'/1000px';
+            $path_img_500px = $path_img.'/500px';
+            $path_img_100px = $path_img.'/100px';
+            
+            $toCreate = array($path_img, $path_img_ori, $path_img_1000px, $path_img_500px, $path_img_100px);
+            $permissions = 0755;
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN')
+            {
+                createFolder($toCreate, $permissions);
+            }
+            else
+            {
+                shell_createFolder($toCreate);
+            }
+            
+            $images = $this->GetContents($file);
+            $list = count($images);
+            
+            $dataNotExist = array();
+            
+            foreach ($images as $image){
+                $entry = $image['filename'];
+                $path_entry = $image['path'];
+                
+                $len = strlen($file);
+                $folder = substr($path_entry,$len);
+                
+                if(preg_match('#\.(jpg|jpeg|JPG|JPEG)$#i', $entry)){
+                    $image_name_encrypt = md5(str_shuffle($CONFIG['default']['salt'].$entry));
+                    $fileinfo = getimagesize($path_entry.'/'.$entry);
+                    if(!$fileinfo) {
+                        $status = "error";
+                        $msg = "Tidak ada informasi jenis berkas";
+                    }else{
+                        $valid_types = array(IMAGETYPE_JPEG);
+                        $valid_mime = array('image/jpeg');
+                    
+                        if(in_array($fileinfo[2],  $valid_types) || in_array($fileinfo['mime'],  $valid_mime)) {
+                            $mime = true;
+                        }else{
+                            $mime = false;
+                        } 
+                        
+                        if($mime){
+                            
+                            //check file exist here
+                            //$dataExist = $this->imagezip->dataExist($entry);
+                            $dataExist = $this->imagezip->imageExist($entry);
+                            
+                            //add file information to array
+                            $fileToInsert = array('filename' => $entry,'md5sum' => $image_name_encrypt, 'directory' => $folder, 'mimetype' => $fileinfo['mime']);
+                            
+                            if($dataExist){
+                                
+                                //get detail image
+                                $detail_image = $this->imagezip->get_image_by_name($entry);
+                                
+                                if($detail_image['md5sum'])
+                                {
+                                    $delete_image = array(
+                                        $path_img_ori.'/'.$detail_image['md5sum'].'.ori.jpg',
+                                        $path_img_1000px.'/'.$detail_image['md5sum'].'.1000px.jpg',
+                                        $path_img_500px.'/'.$detail_image['md5sum'].'.500px.jpg',
+                                        $path_img_100px.'/'.$detail_image['md5sum'].'.100px.jpg'
+                                    );
+                                    
+                                    //delete old image
+                                    $this->delete_img($delete_image);
+                                }
+                                
+                                copy($path_entry."/".$entry, $path_img_ori.'/'.$image_name_encrypt.'.ori.jpg');
+                                copy($path_entry."/".$entry, $path_img_1000px.'/'.$image_name_encrypt.'.1000px.jpg');
+                                if(!@ copy($path_entry."/".$entry, $path_img_1000px.'/'.$image_name_encrypt.'.1000px.jpg')){
+                                    $status = "error";
+                                    $msg= error_get_last();
+                                }
+                                else{
+                                    $src_tmp = $path_entry."/".$entry;
+                                    $dest_1000px = $CONFIG['default']['root_path'].'/'.$path_img_1000px.'/'.$image_name_encrypt.'.1000px.jpg';
+                                    $dest_500px = $CONFIG['default']['root_path'].'/'.$path_img_500px.'/'.$image_name_encrypt.'.500px.jpg';
+                                    $dest_100px = $CONFIG['default']['root_path'].'/'.$path_img_100px.'/'.$image_name_encrypt.'.100px.jpg';
+                                    
+                                    if ($fileinfo[0] >= 1000 || $fileinfo[1] >= 1000 ) {
+                                        if ($fileinfo[0] > $fileinfo[1]) {
+                                            $percentage = (1000/$fileinfo[0]);
+                                            $config['width'] = $percentage*$fileinfo[0];
+                                            $config['height'] = $percentage*$fileinfo[1];
+                                        }else{
+                                            $percentage = (1000/$fileinfo[1]);
+                                            $config['width'] = $percentage*$fileinfo[0];
+                                            $config['height'] = $percentage*$fileinfo[1];
+                                        }
+                                        
+                                        $this->resize_pic($src_tmp, $dest_1000px, $config);
+                                        unset($config);
+                                    }
+                                    
+                                    //Set cropping for y or x axis, depending on image orientation
+                                    if ($fileinfo[0] > $fileinfo[1]) {
+                                        $config['width'] = $fileinfo[1];
+                                        $config['height'] = $fileinfo[1];
+                                        $config['x_axis'] = (($fileinfo[0] / 2) - ($config['width'] / 2));
+                                        $config['y_axis'] = 0;
+                                    }
+                                    else {
+                                        $config['width'] = $fileinfo[0];
+                                        $config['height'] = $fileinfo[0];
+                                        $config['x_axis'] = 0;
+                                        $config['y_axis'] = (($fileinfo[1] / 2) - ($config['height'] / 2));
+                                    }
+    
+                                    $this->cropToSquare($src_tmp, $dest_500px, $config);
+                                    unset($config);
+                                    
+                                    //set new config
+                                    $config['width'] = 500;
+                                    $config['height'] = 500;
+                                    $this->resize_pic($dest_500px, $dest_500px, $config);
+                                    unset($config);
+                                    
+                                    $config['width'] = 100;
+                                    $config['height'] = 100;
+                                    $this->resize_pic($dest_500px, $dest_100px, $config);
+                                    unset($config);
+                                    
+                                    //update data
+                                    $insertImage = $this->imagezip->updateImage($personID, $fileToInsert);
+                                                            
+                                } // end if copy
+                            }else{
+                                //add data information to array
+                                array_push($dataNotExist,$fileToInsert);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            $count_dataNotExist = count($dataNotExist);
+            
+            if($list == $count_dataNotExist){
+                $status = 'warning';
+                $msg = 'File berhasil diekstrak. Tidak ada gambar yang sesuai dengan data.';
+                $data['dataNotExist'] = $dataNotExist;
+            }else{
+                //send dataNotExist information to user   
+
+                $status = 'success';
+                $msg = 'File berhasil diekstrak';
+                $data['dataNotExist'] = $dataNotExist;
+            }
+                
         }else{
             $status = "error";
             $msg = 'Nama file tidak boleh kosong';
@@ -423,6 +660,22 @@ class zip extends Controller {
         $username = 'nje';
         $filename = 'filenotexist.zip';
         
+    }
+    
+    /**
+     * move zip file from user folder (outside project folder) to tmp file inside project folder
+     * 
+     * @param $img_array = array img to delete with path
+     * */
+    function delete_img($img_array=NULL)
+    {
+        foreach ($img_array as $img)
+        {
+            if(file_exists($img))
+            {
+                unlink($img);
+            }
+        }
     }
 	
 }

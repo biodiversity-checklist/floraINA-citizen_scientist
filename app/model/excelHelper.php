@@ -37,6 +37,7 @@ class excelHelper extends Database {
 		$this->log = $GLOBALS['CODEKIR']['LOGS'];
 		// $this->log->logActivity('upload','load excel success');
 		$this->locale = $LOCALE;
+		$this->prefix = "peerkalbar";
 	}
 
 	function loadexcel($file=false)
@@ -127,7 +128,7 @@ class excelHelper extends Database {
 				exit;
 			}
 			
-			logFile('parse data excel success, data= '. serialize($data));
+			logFile('parse data excel success');
 			// clean data, if empty pass
 			if ($data){
 				foreach ($data as $key=>$val){
@@ -160,7 +161,7 @@ class excelHelper extends Database {
 	
 	function referenceData($newData=array())
 	{
-		global $C_SPEC;
+		global $C_SPEC, $LOCALE;
 		if (empty($newData)) return false;
 		
 		$sql = array();
@@ -290,11 +291,11 @@ class excelHelper extends Database {
 					if ($defineTable[$key]=='person'){
 						$t_field[] = 'institutions';
 						$t_field[] = 'project';
-						$t_data[] = "'comunity kalbar'"; 
-						$t_data[] = "'Peer Project USAID-Harvard-UG-Surya Flora kalbar'"; 
+						$t_data[] = "'{$LOCALE['default']['xls_upload']['institution']}'"; 
+						$t_data[] = "'{$LOCALE['default']['project_title']}'"; 
 
-						$tmpupdate[] = "`institutions` = 'comunity kalbar'";
-						$tmpupdate[] = "`project` = 'Peer Project USAID-Harvard-UG-Surya Flora kalbar'";
+						$tmpupdate[] = "`institutions` = '{$LOCALE['default']['xls_upload']['institution']}'";
+						$tmpupdate[] = "`project` = '{$LOCALE['default']['project_title']}'";
 					}
 						
 
@@ -306,7 +307,7 @@ class excelHelper extends Database {
 					$update = implode(',', $tmpupdate);
 					// pr($tmpField);
 					if (!in_array($key,$ignoreTable)){
-						$sql[$defineTable[$key]][] = "INSERT INTO {$defineTable[$key]} ({$tmpField}) VALUES ({$tmpData}) ON DUPLICATE KEY UPDATE {$update} , id=LAST_INSERT_ID(id)";
+						$sql[$defineTable[$key]][] = "INSERT INTO {$this->prefix}_{$defineTable[$key]} ({$tmpField}) VALUES ({$tmpData}) ON DUPLICATE KEY UPDATE {$update} , id=LAST_INSERT_ID(id)";
 						
 						// $sql[$defineTable[$key]][] = "REPLACE INTO {$defineTable[$key]} ({$tmpField}) VALUES ({$tmpData}) ";
 						
@@ -330,7 +331,7 @@ class excelHelper extends Database {
 		$returnArr['rawdata'] = $arrTmp;
 		
 		// logFile(serialize($returnArr));
-		logFile(serialize($sql));
+		// logFile(serialize($sql));
 		logFile('referenceData ready');
 		
 		return $returnArr;
@@ -559,7 +560,7 @@ class excelHelper extends Database {
 						$tmpField = implode(',',$t_field); 
 						$tmpData = implode(',',$t_data); 
 						$update = implode(',', $tmpupdate);
-						$sql[$b][] = "INSERT INTO {$b} ({$tmpField}) VALUES ({$tmpData}) ON DUPLICATE KEY UPDATE {$update} , id=LAST_INSERT_ID(id)";
+						$sql[$b][] = "INSERT INTO {$this->prefix}_{$b} ({$tmpField}) VALUES ({$tmpData}) ON DUPLICATE KEY UPDATE {$update} , id=LAST_INSERT_ID(id)";
 						// $sql[$b][] = "REPLACE INTO {$b} ({$tmpField}) VALUES ({$tmpData})";
 						
 						$arrTmp[$b]['data'][] = $t_dataraw;
@@ -579,7 +580,7 @@ class excelHelper extends Database {
 		$returnArr['uniqkey'] = $dataKey;
 		$returnArr['rawdata'] = $arrTmp;
 		// pr($returnArr);
-		logFile(serialize($sql));
+		// logFile(serialize($sql));
 		logFile('parseMasterData success');
 		
 		return $returnArr;
@@ -590,7 +591,7 @@ class excelHelper extends Database {
 	{
 		global $C_SPEC;
 		
-		
+		logFile("validate field {$keyField} = {$v}");
 		if (!$defineTable && !$keyField && !$v) return false;
 		
 		$libsDefine = $C_SPEC[$defineTable][$keyField];

@@ -17,6 +17,8 @@ class taxon extends Controller {
 			exit;
 		} 
 		// $this->validatePage();
+
+		$this->prefix = "peerkalbar";
 	}
 	public function loadmodule()
 	{
@@ -35,8 +37,103 @@ class taxon extends Controller {
 
 	}
     
+    function handleRequest()
+    {
+
+    	$this->serverSide = $this->loadModel('serverSide');
+		$serverside = new serverSide;
+
+		$loadFunction = $_GET['function'];
+
+		$SSConfig = $this->$loadFunction();
+
+		$output = $this->serverSide->dTableData($SSConfig);
+		header('Access-Control-Allow-Origin: *');
+		header("Access-Control-Allow-Headers: *");
+		echo json_encode($output);
+
+		exit;
+    }
+
+    function taxonConfig()
+    {
+    	global $portaldomain;
+
+    	$decodeData = array("{$this->prefix}_indiv.n_status"=>0);
+
+    	$SSConfig['APIHelper']    = 'browseHelper';
+		$SSConfig['APIFunction']  = 'dataTaxon';
+		$SSConfig['filter']       = $decodeData;
+
+    	$SSConfig['primaryTable'] = "{$this->prefix}_taxon";
+		$SSConfig['primaryField'] = "id";
+		$SSConfig['searchField'] = array('morphotype', 'fam', 'gen', 'sp');
+
+		$SSConfig['view'][1] = "morphotype";
+		$SSConfig['view'][2] = "fam"; 
+		$SSConfig['view'][3] = "gen";
+		$SSConfig['view'][4] = "sp";
+		$SSConfig['view'][5] = "image|img|sp|id";
+		$SSConfig['view'][6] = "detail|{$portaldomain}browse/indiv/|id=id&action=indivTaxon";
+		
+		return $SSConfig;
+    }
+
+    function locationConfig()
+    {
+    	global $portaldomain;
+
+    	$decodeData = array("{$this->prefix}_indiv.n_status"=>0);
+
+    	$SSConfig['APIHelper']    = 'browseHelper';
+		$SSConfig['APIFunction']  = 'dataLocation';
+		$SSConfig['filter']       = $decodeData;
+
+    	$SSConfig['primaryTable'] = "{$this->prefix}_locn";
+		$SSConfig['primaryField'] = "id";
+		$SSConfig['searchField'] = array('province', 'island', 'country', 'elev','locality','county');
+
+		$SSConfig['view'][1] = "province";
+		$SSConfig['view'][2] = "island"; 
+		$SSConfig['view'][3] = "country";
+		$SSConfig['view'][4] = "elev";
+		$SSConfig['view'][5] = "locality";
+		$SSConfig['view'][6] = "county";
+		$SSConfig['view'][8] = "detail|{$portaldomain}browse/indiv/|id=id&action=indivLocn";
+		
+		return $SSConfig;
+    }
+
+    function personConfig()
+    {
+    	global $portaldomain;
+
+    	$decodeData = array("{$this->prefix}_indiv.n_status"=>0);
+
+    	$SSConfig['APIHelper']    = 'browseHelper';
+		$SSConfig['APIFunction']  = 'dataPerson';
+		$SSConfig['filter']       = $decodeData;
+
+    	$SSConfig['primaryTable'] = "{$this->prefix}_person";
+		$SSConfig['primaryField'] = "id";
+		$SSConfig['searchField'] = array('name', 'twitter', 'website', 'institutions','project');
+
+		// $SSConfig['view'][1] = "id";
+		$SSConfig['view'][1] = "name";
+		$SSConfig['view'][2] = "twitter"; 
+		$SSConfig['view'][3] = "website";
+		$SSConfig['view'][4] = "institutions";
+		$SSConfig['view'][5] = "project";
+		$SSConfig['view'][6] = "detail|{$portaldomain}browse/indiv/|id=id&action=indivPerson";
+		
+		return $SSConfig;
+    }
+
 	function getDataTaxon()
 	{
+
+		// pr($_GET);
+		// exit;
 		$taxon =  $this->browseHelper->dataTaxon();
 		if ($taxon){
 			print json_encode($taxon);
